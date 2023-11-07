@@ -483,6 +483,12 @@ body.loading {
 
   #intro-text,
   #intro-image {
+    order: 1;
+    width: 12em;
+    margin: 0 auto; /* Centers the elements horizontally */
+  }
+  #intro-text {
+    order: 2;
     width: 12em;
     margin: 0 auto; /* Centers the elements horizontally */
   }
