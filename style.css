@@ -368,6 +368,30 @@ h3 a:hover {
 }
 
 /**********/
+/* Preloader */
+#preloader {
+  position: fixed;
+  top: 0;
+   left: 0;
+   right: 0;
+   bottom: 0;
+  background:url(images/preloader.gif) no-repeat #FFFFFF 50%;
+  -moz-background-size:64px 64px;
+  -o-background-size:64px 64px;
+  -webkit-background-size:64px 64px;
+  background-size:64px 64px;
+  z-index: 99998;
+  width:100%;
+  height:100%;
+}
+
+/* This will hide the scrollbar during loading */
+body.loading {
+  overflow: hidden;
+}
+
+
+/**********/
 /* Video Gallery */
 
 .video-grid {
@@ -437,5 +461,7 @@ h3 a:hover {
     width: 100%; /* Full width of its container */
   }
 
-  /* Add any additional styles here that you need to adjust for mobile layouts */
 }
+
+
+
