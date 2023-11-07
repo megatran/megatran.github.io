@@ -481,7 +481,6 @@ body.loading {
     flex-direction: column; /* Stack intro text and image on top of each other */
   }
 
-  #intro-text,
   #intro-image {
     order: 1;
     width: 12em;
