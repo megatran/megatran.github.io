@@ -224,6 +224,12 @@ h2 {
   width: 100%;
 }
 
+.preview4 {
+  width: 97%;
+  height: auto;
+  object-fit: cover;
+}
+
 /**************************************************/
 /* Buttons for showing more or less highlights. */
 
