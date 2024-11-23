@@ -474,35 +474,86 @@ body.loading {
 
 @media screen and (max-width: 600px) {
   #main {
-    width: auto; /* Adjust the main container to be responsive */
-    padding: 10px 30px; /* Add some padding so content doesn't touch the edges */
-  }
-
-  .thumbnail,
-  .project-description {
-    width: auto; /* Adjust width to be 100% on smaller screens */
-    float: none; /* Disable floating so they stack vertically */
+    width: 90%; /* Use percentage instead of auto */
+    margin: 0 auto;
+    padding: 10px;
   }
 
   #intro {
-    flex-direction: column; /* Stack intro text and image on top of each other */
+    flex-direction: column;
+    padding-top: 2em;
+  }
+
+  #intro-text {
+    width: 100%; /* Full width on mobile */
+    order: 2;
+    margin: 1em 0;
   }
 
   #intro-image {
+    width: 100%;
+    max-width: 12em; /* Keep maximum size */
+    margin: 2em auto;
     order: 1;
-    width: 12em;
-    margin: 0 auto; /* Centers the elements horizontally */
-  }
-  #intro-text {
-    order: 2;
-    width: 12em;
-    margin: 0 auto; /* Centers the elements horizontally */
   }
 
-  #intro-image img {
-    width: 100%; /* Full width of its container */
+  /* Fix for project items */
+  .list-item {
+    display: flex;
+    flex-direction: column;
   }
 
+  .thumbnail {
+    width: 100%;
+    margin-bottom: 1em;
+  }
+
+  .project-description {
+    width: 100%;
+  }
+
+  /* Fix for video grid */
+  .video-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  /* Fix for preview grid */
+  .grid-container {
+    grid-template-columns: 1fr;
+  }
+
+  .grid-item {
+    width: 100%;
+    margin: 0 auto;
+  }
+
+  .grid-item.vertical {
+    grid-column: auto;
+    grid-row: auto;
+  }
+
+  /* Fix for misc section */
+  .misc .thumbnail {
+    width: 100%; /* Full width on mobile */
+    float: none;
+    margin-right: 0;
+    margin-bottom: 1em;
+  }
+
+  .misc .project-description {
+    width: 100%;
+    float: none;
+    clear: both;
+  }
+
+  /* Ensure images and videos fill container width */
+  .misc .thumbnail img,
+  .misc .thumbnail video {
+    width: 100%;
+    height: auto;
+    margin-top: 0;
+  }
 }
 
 
