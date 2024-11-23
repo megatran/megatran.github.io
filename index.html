@@ -62,7 +62,27 @@
           </p>
         </div>
         <div id="intro-image">
-          <img src="images/nhan_profile.jpg">
+          <div class="slideshow-container">
+            <div class="mySlides">
+              <img src="images/profile/nhan_profile.jpg">
+            </div>
+            <div class="mySlides">
+              <img src="images/profile/nhan_uk.jpg">
+            </div>
+            <div class="mySlides">
+              <img src="images/profile/nhan_cinematography.png">
+            </div>
+            <div class="mySlides">
+              <img src="images/profile/oppenheimer_recreate.JPG">
+            </div>
+          </div>
+          
+          <div class="dots-container">
+            <span class="dot" onclick="currentSlide(1)"></span>
+            <span class="dot" onclick="currentSlide(2)"></span>
+            <span class="dot" onclick="currentSlide(3)"></span>
+            <span class="dot" onclick="currentSlide(4)"></span>
+          </div>
         </div>
       </div>
 
@@ -431,9 +451,6 @@
                 <br >
                 <br >
                 <br >
-                <br >
-                <br >
-                <br >
           </div>
         </div>
 
@@ -649,6 +666,46 @@
 
 
       update_isotope();
+
+      let slideIndex = 1;
+      let slideTimer;
+
+      function showSlides(n) {
+        let slides = document.getElementsByClassName("mySlides");
+        let dots = document.getElementsByClassName("dot");
+        
+        if (n > slides.length) {slideIndex = 1}
+        if (n < 1) {slideIndex = slides.length}
+        
+        for (let i = 0; i < slides.length; i++) {
+          slides[i].style.display = "none";
+        }
+        for (let i = 0; i < dots.length; i++) {
+          dots[i].className = dots[i].className.replace(" active", "");
+        }
+        
+        slides[slideIndex-1].style.display = "block";
+        dots[slideIndex-1].className += " active";
+      }
+
+      function currentSlide(n) {
+        clearTimeout(slideTimer);  // Reset timer when manually changing slides
+        showSlides(slideIndex = n);
+        autoSlide();  // Restart auto-sliding
+      }
+
+      function autoSlide() {
+        slideTimer = setTimeout(() => {
+          showSlides(slideIndex += 1);
+          autoSlide();
+        }, 3000);  // Change slide every 3 seconds
+      }
+
+      // Initialize the slideshow
+      document.addEventListener('DOMContentLoaded', function() {
+        showSlides(slideIndex);
+        autoSlide();
+      });
 
     </script>
   </body>

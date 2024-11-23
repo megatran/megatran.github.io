@@ -100,14 +100,62 @@ h1 {
 #intro-image {
   margin: 7em 0 0 2em;
   width: 12em;
-  height: 12em;
-  float: left;
-  overflow: hidden;
-  border-radius: 1em;
 }
 
 #intro-image img {
   width: 12em;
+}
+
+/* Image container */
+#intro-image {
+  margin: 7em 0 0 2em;
+  width: 12em;
+}
+
+/* Image styles */
+.slideshow-container {
+  width: 12em;
+  height: 12em;
+  overflow: hidden;
+  border-radius: 1em;
+  margin-bottom: 10px;
+}
+
+/* Simple slideshow */
+.mySlides {
+  display: none;
+}
+
+.mySlides img {
+  width: 12em;
+  height: 12em;
+  object-fit: cover;
+}
+
+/* Dots navigation */
+.dots-container {
+  display: block;
+  width: 12em;
+  text-align: center;
+  padding: 5px 0;
+}
+
+.dot {
+  cursor: pointer;
+  height: 6px;
+  width: 6px;
+  margin: 0 4px;
+  background-color: #d1d1d1;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.dot.active {
+  background-color: #666;
+}
+
+.dot:hover {
+  background-color: #666;
 }
 
 /**************************************************/
@@ -555,6 +603,4 @@ body.loading {
     margin-top: 0;
   }
 }
-
-
 
