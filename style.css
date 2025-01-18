@@ -356,11 +356,12 @@ h3 a:hover {
 
 #footer {
   color: #a0a8b0;
-  position: absolute;
-  bottom: 0;
-  line-height: 2.5em;
+  width: 100%;
+  padding: 1em 0;
+  clear: both;
+  position: relative;  
+  margin-top: 2em;   
 }
-
 /**********/
 /* Section title */
 .section-title h2 {
