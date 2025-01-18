@@ -633,6 +633,10 @@
         }
       });
 
+      // Force a layout update after the page loads
+      $(window).on('load', function() {
+        $grid.isotope('layout');
+      });
       // Bind filter button click.
       $('#filters').on( 'click', 'button', function() {
         var filterValue = $( this ).attr('data-filter');
