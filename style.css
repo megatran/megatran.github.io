@@ -237,9 +237,16 @@ h2 {
 
 .list-item p.date {
   display: inline-block;
-  width: 3em;
+  width: 80px;
   color: #a0a8b0;
 }
+
+/* .date {
+  display: inline-block;
+  width: 80px;
+  margin-right: 10px;
+  margin-bottom: 0;
+} */
 
 /**************************************************/
 /* Gallery of 3 preview videos. */
