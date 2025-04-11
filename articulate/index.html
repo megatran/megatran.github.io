@@ -3,36 +3,206 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ARticulate</title>
+    <title>ARticulate | CHI 2025</title>
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            max-width: 900px;  /* Add this to control header width */
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        h1 {
+            font-size: 2.2em;
+        margin-bottom: 5px;
+        max-width: 900px;
+        margin-left: auto;
+        margin-right: auto
+        }
+
+        h2 {
+            font-size: 1.3em;
+            color: #666;
+            margin-top: 0;
+            margin-bottom: 15px;
+        }
+
+        .authors {
+            margin: 10px 0;
+        }
+
+        .authors a {
+            margin: 0 7px;
+            color: #0366d6;
+            text-decoration: none;
+        }
+
+        .affiliation {
+            color: #666;
+        }
+
+        .buttons {
             display: flex;
             justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            text-align: center;
+            margin-bottom: 30px;
         }
-        .container {
-            max-width: 800px;
-            padding: 0 20px;
+
+        .btn {
+            padding: 8px 16px;
+            margin: 0 10px;
+            border: none;
+            border-radius: 4px;
+            font-weight: bold;
+            text-decoration: none;
+            cursor: pointer;
         }
-        h1 {
-            font-size: 24px;
-            color: #333;
-            margin-bottom: 20px;
+
+        .primary {
+            background-color: #0366d6;
+            color: white;
         }
-        p {
-            font-size: 18px;
-            color: #666;
+
+        .secondary {
+            background-color: white;
+            color: #0366d6;
+            border: 1px solid #0366d6;
+        }
+
+        .teaser-image {
+            width: 100%;
+            margin-bottom: 15px;
+        }
+
+        #abstract {
+            margin-top: 40px;
+        }
+
+        #abstract p {
+            font-size: 0.95em;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>ARticulate: Interactive Visual Guidance for Demonstrated Rotational Degrees of Freedom in Mobile AR</h1>
-        <p>Coming soon to CHI 2025</p>
+    <header>
+        <h1>ARticulate: <break/> Interactive Visual Guidance for Demonstrated Rotational Degrees of Freedom in Mobile AR</h1>
+        <h2>CHI 2025</h2>
+        <div class="authors">
+            <a href="https://trannhan.com">Nhan Tran</a>
+            <a href="#">Ethan Yang</a>
+            <a href="http://abedavis.com/">Abe Davis</a>
+        </div>
+        <div class="affiliation">Cornell University, NY, USA</div>
+    </header>
+
+    <div class="buttons">
+        <a href="#" class="btn secondary">Paper</a>
+        <a href="#" class="btn primary">Code</a>
     </div>
+
+    <div class="teaser">
+        <img src="images/articulate_chi25_teaser.png" alt="ARticulate Teaser" class="teaser-image">
+    </div>
+
+    <div id="abstract">
+        <h2>Abstract</h2>
+        <p>Mobile Augmented Reality (AR) offers a powerful way to provide spatially-aware guidance for real-world applications. In many cases, these applications involve the configuration of a camera or articulated subject, asking users to navigate several spatial degrees of freedom (DOF) at once. Most guidance for such tasks relies on decomposing available DOF into subspaces that can be more easily mapped to simple 1D or 2D visualizations. Unfortunately, different factorizations of the same motion often map to very different visual feedback, and finding the factorization that best matches a user’s intuition can be difficult. We propose an interactive approach that infers rotational degrees of freedom from short user demonstrations. Users select one or two DOFs at a time by demonstrating a small range of motion, which we use to learn a rotational frame that best aligns with user control of the object. We show that deriving visual feedback from this inferred learned rotational frame leads to improved task completion times on 6DOF guidance tasks compared to standard default reference frames used in most mixed reality applications.</p>
+    </div>
+
+    <div id="abstract">
+        <h2>Interactive Visualizer</h2>
+        <p>Under construction :p </p>
+        <p>Our talk will be in the <a href="https://programs.sigchi.org/chi/2025/program/content/188844">AR Interaction paper session</a> (April 2025 | 2:22 PM - 2:34 PM Japan time)</p>
+        <p>Code coming soon (Unity plugin for Meta Quest Pro and Python visualization)</p>
+        <div id="bunny-container" style="width: 100%; height: 400px; margin: 20px 0;"></div>
+
+    </div>
+
+    <script async src="https://unpkg.com/es-module-shims/dist/es-module-shims.js"></script>
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+            "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/loaders/"
+        }
+    }
+    </script>
+    <script type="module">
+        import * as THREE from 'three';
+        import { OrbitControls } from 'https://unpkg.com/three@0.160.0/examples/jsm/controls/OrbitControls.js';
+        import { PLYLoader } from 'https://unpkg.com/three@0.160.0/examples/jsm/loaders/PLYLoader.js';
+
+        // Setup scene
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0xffffff);  // White background
+
+        // Add grid
+        const size = 10;
+        const divisions = 10;
+        const gridHelper = new THREE.GridHelper(size, divisions, 0xd0d0d0, 0xe0e0e0);  // Light gray grid
+        scene.add(gridHelper);
+
+        // Setup camera
+        const camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
+        camera.position.set(2, 2, 2);  // Adjusted camera position for better view
+        camera.lookAt(0, 0, 0);
+
+        // ...existing renderer setup...
+
+        // Add lights
+        const ambientLight = new THREE.AmbientLight(0x808080);  // Brighter ambient light
+        scene.add(ambientLight);
+        const light = new THREE.DirectionalLight(0xffffff, 0.8);  // Softer directional light
+        light.position.set(1, 2, 1);
+        scene.add(light);
+
+        // Adjust controls
+        const controls = new OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.05;
+        controls.maxDistance = 10;
+        controls.minDistance = 1;
+
+        // Load Stanford Bunny
+        const loader = new PLYLoader();
+        loader.load('https://raw.githubusercontent.com/alecjacobson/common-3d-test-models/master/data/stanford-bunny.ply', function(geometry) {
+            geometry.computeVertexNormals();
+            const material = new THREE.MeshStandardMaterial({
+                color: 0x808080,
+                roughness: 0.5,
+                metalness: 0.1
+            });
+            const mesh = new THREE.Mesh(geometry, material);
+            mesh.scale.multiplyScalar(1.5);
+            mesh.rotation.x = -Math.PI / 2;
+            scene.add(mesh);
+        });
+
+        // Animation loop
+        function animate() {
+            requestAnimationFrame(animate);
+            controls.update();
+            renderer.render(scene, camera);
+        }
+        animate();
+
+        // Handle window resize
+        window.addEventListener('resize', onWindowResize, false);
+        function onWindowResize() {
+            camera.aspect = container.clientWidth / container.clientHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(container.clientWidth, container.clientHeight);
+        }
+    </script>
+
 </body>
 </html>
