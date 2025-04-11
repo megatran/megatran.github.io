@@ -23,15 +23,24 @@
         }
 
         h1 {
-            font-size: 2.2em;
+            font-size: calc(1rem + 0.9vw); /* Half the previous size */
             margin-bottom: 5px;
             max-width: 900px;
             margin-left: auto;
-            margin-right: auto
+            margin-right: auto;
+            line-height: 1.2;
         }
 
+        h2.conference-name {
+            font-size: calc(1.2rem + 0.2vw); /* Bigger CHI text */
+            color: #666;
+            margin-top: 0;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+        
         h2 {
-            font-size: 1.3em;
+            font-size: calc(0.9rem + 0.5vw);
             color: #666;
             margin-top: 0;
             margin-bottom: 15px;
@@ -39,6 +48,7 @@
 
         .authors {
             margin: 10px 0;
+            font-size: calc(0.8rem + 0.2vw); /* Slightly responsive author text */
         }
 
         .authors a {
@@ -49,22 +59,26 @@
 
         .affiliation {
             color: #666;
+            font-size: calc(0.8rem + 0.1vw);
         }
 
         .buttons {
             display: flex;
             justify-content: center;
             margin-bottom: 30px;
+            flex-wrap: wrap; /* Allow buttons to wrap on small screens */
+            gap: 10px; /* Space between buttons when they wrap */
         }
 
         .btn {
             padding: 8px 16px;
-            margin: 0 10px;
+            margin: 0 5px;
             border: none;
             border-radius: 4px;
             font-weight: bold;
             text-decoration: none;
             cursor: pointer;
+            font-size: calc(0.8rem + 0.1vw);
         }
 
         .primary {
@@ -84,24 +98,59 @@
         }
 
         #abstract {
-            margin-top: 40px;
+            margin-top: 30px; /* Reduced margin on mobile */
+        }
+
+        #abstract h2 {
+            font-size: calc(1rem + 0.3vw);
         }
 
         #abstract p {
-            font-size: 0.95em;
+            font-size: calc(0.85rem + 0.1vw);
         }
         
         #loading-status {
             text-align: center;
             color: #666;
             margin-top: 10px;
+            font-size: calc(0.8rem + 0.1vw);
+        }
+
+        /* Mobile-specific adjustments */
+        @media (max-width: 600px) {
+            body {
+                padding: 15px;
+            }
+            
+            h1 {
+                font-size: 1.5rem; /* Half the previous size for mobile */
+            }
+            
+            h2.conference-name {
+                font-size: 1.0rem; /* Bigger CHI text on mobile */
+            }
+            
+            .buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .btn {
+                margin: 5px 0;
+                width: 200px; /* Fixed width for buttons on mobile */
+                text-align: center;
+            }
+            
+            #bunny-container {
+                height: 300px !important; /* Smaller height on mobile */
+            }
         }
     </style>
 </head>
 <body>
     <header>
-        <h1>ARticulate: <break/> Interactive Visual Guidance for Demonstrated Rotational Degrees of Freedom in Mobile AR</h1>
-        <h2>CHI 2025</h2>
+        <h1>ARticulate: Interactive Visual Guidance for Demonstrated Rotational Degrees of Freedom in Mobile AR</h1>
+        <h2 class="conference-name">CHI 2025</h2>
         <div class="authors">
             <a href="https://trannhan.com">Nhan (Nathan) Tran</a>
             <a href="#">Ethan Yang</a>
@@ -111,8 +160,8 @@
     </header>
 
     <div class="buttons">
-        <a href="#" class="btn secondary">Paper (Coming Soon)</a>
-        <a href="#" class="btn primary">Code (Coming Soon)</a>
+        <a href="#" class="btn secondary">Paper (Soon)</a>
+        <a href="#" class="btn primary">Code (Soon)</a>
     </div>
 
     <div class="teaser">
@@ -121,9 +170,7 @@
 
     <div id="abstract">
         <h2>Abstract</h2>
-        <p>Mobile Augmented Reality (AR) offers a powerful way to provide spatially-aware guidance for real-world applications. In many cases, these applications involve the configuration of a camera or articulated subject, asking users to navigate several spatial degrees of freedom (DOF) at once. Most guidance for such tasks relies on decomposing available DOF into subspaces that can be more easily mapped to simple 1D or 2D visualizations. Unfortunately, different factorizations of the same motion often map to very different visual feedback, and finding the factorization that best matches a user’s intuition can be difficult. We propose an interactive approach that infers rotational degrees of freedom from short user demonstrations. Users select one or two DOFs at a time by demonstrating a small range of motion, which we use to learn a rotational frame that best aligns with user control of the object. We show that deriving visual feedback from this inferred learned rotational frame leads to improved task completion times on 6DOF guidance tasks compared to standard default reference frames used in most mixed reality applications.
-
-        </p>
+        <p>Mobile Augmented Reality (AR) offers a powerful way to provide spatially-aware guidance for real-world applications. In many cases, these applications involve the configuration of a camera or articulated subject, asking users to navigate several spatial degrees of freedom (DOF) at once. Most guidance for such tasks relies on decomposing available DOF into subspaces that can be more easily mapped to simple 1D or 2D visualizations. Unfortunately, different factorizations of the same motion often map to very different visual feedback, and finding the factorization that best matches a user's intuition can be difficult. We propose an interactive approach that infers rotational degrees of freedom from short user demonstrations. Users select one or two DOFs at a time by demonstrating a small range of motion, which we use to learn a rotational frame that best aligns with user control of the object. We show that deriving visual feedback from this inferred learned rotational frame leads to improved task completion times on 6DOF guidance tasks compared to standard default reference frames used in most mixed reality applications.</p>
     </div>
 
     <div id="abstract">
