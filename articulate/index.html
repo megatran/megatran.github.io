@@ -173,6 +173,380 @@
         <p>Mobile Augmented Reality (AR) offers a powerful way to provide spatially-aware guidance for real-world applications. In many cases, these applications involve the configuration of a camera or articulated subject, asking users to navigate several spatial degrees of freedom (DOF) at once. Most guidance for such tasks relies on decomposing available DOF into subspaces that can be more easily mapped to simple 1D or 2D visualizations. Unfortunately, different factorizations of the same motion often map to very different visual feedback, and finding the factorization that best matches a user's intuition can be difficult. We propose an interactive approach that infers rotational degrees of freedom from short user demonstrations. Users select one or two DOFs at a time by demonstrating a small range of motion, which we use to learn a rotational frame that best aligns with user control of the object. We show that deriving visual feedback from this inferred learned rotational frame leads to improved task completion times on 6DOF guidance tasks compared to standard default reference frames used in most mixed reality applications.</p>
     </div>
 
+    <div id="rotation-comparison" style="width:100%; margin:40px 0 20px; text-align:center;">
+        <h3 style="font-size:calc(1rem + 0.3vw); color:#444; margin-bottom:30px;">
+          Same Math, Different Perspectives
+        </h3>
+      
+        <div class="animation-container">
+          <!-- SVG for desktop -->
+          <svg width="100%" height="300" viewBox="0 0 800 300" xmlns="http://www.w3.org/2000/svg" class="desktop-svg">
+            <!-- Left Side – Rotating Object, Fixed Camera -->
+            <g transform="translate(200, 200)">
+              <circle cx="0" cy="0" r="100" fill="none" stroke="#ddd" stroke-width="1" stroke-dasharray="5,5"/>
+              <circle cx="0" cy="0" r="4" fill="#e63946"/>
+              <g transform="translate(120, 0) rotate(180)">
+                <rect x="-10" y="-6" width="20" height="12" fill="#333" rx="2"/>
+                <path d="M 0,0 L 20,-15 L 20,15 Z" fill="#a8201a" fill-opacity="0.4" stroke="#a8201a" stroke-width="1"/>
+                <path d="M 0,0 L 20,15 L 20,-15 Z" fill="#a8201a" fill-opacity="0.4" stroke="#a8201a" stroke-width="1"/>
+              </g>
+              <g id="robotObject-desktop">
+                <g>
+                  <rect x="-45" y="-5" width="45" height="10" fill="#4682B4"/>
+                  <rect x="-42" y="-7" width="39" height="14" fill="#4682B4" opacity="0.6"/>
+                  <circle cx="-30" cy="0" r="3" fill="#333"/>
+                  <circle cx="-15" cy="0" r="3" fill="#333"/>
+                  <circle cx="-45" cy="0" r="8" fill="#555"/>
+                  <circle cx="-45" cy="0" r="6" fill="#666"/>
+                  <circle cx="-45" cy="0" r="2" fill="#333"/>
+                </g>
+                <circle cx="0" cy="0" r="8" fill="#555"/>
+                <circle cx="0" cy="0" r="6" fill="#666"/>
+                <circle cx="0" cy="0" r="3" fill="#333"/>
+                <g id="movableSegment-desktop" transform="rotate(-40)">
+                  <rect x="0" y="-5" width="45" height="10" fill="#4682B4"/>
+                  <rect x="3" y="-7" width="39" height="14" fill="#4682B4" opacity="0.6"/>
+                  <circle cx="15" cy="0" r="3" fill="#333"/>
+                  <circle cx="30" cy="0" r="3" fill="#333"/>
+                  <g transform="translate(45, 0)">
+                    <rect x="-8" y="-8" width="16" height="16" fill="#333" rx="1"/>
+                    <rect x="-6" y="-10" width="4" height="20" fill="#444"/>
+                    <rect x="2" y="-10" width="4" height="20" fill="#444"/>
+                  </g>
+                </g>
+              </g>
+              <text x="0" y="-150" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#444" font-weight="bold">
+                Rotating Object, Fixed Camera
+              </text>
+              <text x="0" y="-130" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#222">
+                Inferring joint center for rotating arm
+              </text>
+            </g>
+      
+            <!-- Right Side – Fixed Object, Moving Camera -->
+            <g transform="translate(600, 200)">
+              <circle cx="0" cy="0" r="100" fill="none" stroke="#ddd" stroke-width="1" stroke-dasharray="5,5"/>
+              <circle cx="0" cy="0" r="4" fill="#e63946"/>
+              <g>
+                <rect x="-45" y="-5" width="45" height="10" fill="#4682B4"/>
+                <rect x="-42" y="-7" width="39" height="14" fill="#4682B4" opacity="0.6"/>
+                <circle cx="-30" cy="0" r="3" fill="#333"/>
+                <circle cx="-15" cy="0" r="3" fill="#333"/>
+                <circle cx="-45" cy="0" r="8" fill="#555"/>
+                <circle cx="-45" cy="0" r="6" fill="#666"/>
+                <circle cx="-45" cy="0" r="2" fill="#333"/>
+              </g>
+              <circle cx="0" cy="0" r="8" fill="#555"/>
+              <circle cx="0" cy="0" r="6" fill="#666"/>
+              <circle cx="0" cy="0" r="3" fill="#333"/>
+              <g transform="rotate(-40)">
+                <rect x="0" y="-5" width="45" height="10" fill="#4682B4"/>
+                <rect x="3" y="-7" width="39" height="14" fill="#4682B4" opacity="0.6"/>
+                <circle cx="15" cy="0" r="3" fill="#333"/>
+                <circle cx="30" cy="0" r="3" fill="#333"/>
+                <g transform="translate(45, 0)">
+                  <rect x="-8" y="-8" width="16" height="16" fill="#333" rx="1"/>
+                  <rect x="-6" y="-10" width="4" height="20" fill="#444"/>
+                  <rect x="2" y="-10" width="4" height="20" fill="#444"/>
+                </g>
+              </g>
+              <g id="movingCamera-desktop">
+                <rect x="-10" y="-6" width="20" height="12" fill="#333" rx="2"/>
+                <path d="M 0,0 L 20,-15 L 20,15 Z" fill="#a8201a" fill-opacity="0.4" stroke="#a8201a" stroke-width="1"/>
+                <path d="M 0,0 L 20,15 L 20,-15 Z" fill="#a8201a" fill-opacity="0.4" stroke="#a8201a" stroke-width="1"/>
+              </g>
+              <text x="0" y="-150" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#444" font-weight="bold">
+                Fixed Object, Moving Camera
+              </text>
+              <text x="0" y="-130" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#222">
+                Inferring subject center for camera movement
+              </text>
+            </g>
+          </svg>
+      
+          <!-- SVG for mobile -->
+        
+          <svg width="100%" height="500" viewBox="0 0 400 500" … class="mobile-svg">           <!-- Top part - Articulated Object -->
+           <g transform="translate(200, 140)">
+            <!-- Title -->
+            <text x="0" y="-120" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#444" font-weight="bold">
+                Rotating Object, Fixed Camera
+            </text>
+            
+            <!-- Subtitle -->
+            <text x="0" y="-100" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#222">
+                Inferring joint center for rotating arm
+            </text>
+            
+            <!-- Background reference circle -->
+            <circle cx="0" cy="0" r="90" fill="none" stroke="#ddd" stroke-width="1" stroke-dasharray="5,5"/>
+            
+            <!-- Center point (elbow) -->
+            <circle cx="0" cy="0" r="4" fill="#e63946"/>
+            
+            <!-- Fixed camera (COLMAP style) -->
+            <g transform="translate(110, 0) rotate(180)">
+                <rect x="-10" y="-6" width="20" height="12" fill="#333" rx="2"/>
+                <path d="M 0,0 L 20,-15 L 20,15 Z" fill="#a8201a" fill-opacity="0.4" stroke="#a8201a" stroke-width="1"/>
+                <path d="M 0,0 L 20,15 L 20,-15 Z" fill="#a8201a" fill-opacity="0.4" stroke="#a8201a" stroke-width="1"/>
+            </g>
+            
+            <!-- Robot Object (with joint at center) -->
+            <g id="robotObject-mobile">
+                <!-- Upper segment - FIXED -->
+                <g>
+                    <rect x="-40" y="-5" width="40" height="10" fill="#4682B4" rx="0"/>
+                    <rect x="-37" y="-7" width="34" height="14" fill="#4682B4" rx="0" opacity="0.6"/>
+                    <circle cx="-25" cy="0" r="3" fill="#333"/>
+                    <circle cx="-10" cy="0" r="3" fill="#333"/>
+                    <circle cx="-40" cy="0" r="8" fill="#555"/>
+                    <circle cx="-40" cy="0" r="6" fill="#666"/>
+                    <circle cx="-40" cy="0" r="2" fill="#333"/>
+                </g>
+                
+                <!-- Joint at center -->
+                <circle cx="0" cy="0" r="8" fill="#555"/>
+                <circle cx="0" cy="0" r="6" fill="#666"/>
+                <circle cx="0" cy="0" r="3" fill="#333"/>
+                
+                <!-- Movable segment - ANIMATED -->
+                <g id="movableSegment-mobile" transform="rotate(-40)">
+                    <rect x="0" y="-5" width="40" height="10" fill="#4682B4" rx="0"/>
+                    <rect x="3" y="-7" width="34" height="14" fill="#4682B4" rx="0" opacity="0.6"/>
+                    <circle cx="15" cy="0" r="3" fill="#333"/>
+                    <circle cx="30" cy="0" r="3" fill="#333"/>
+                    <g transform="translate(40, 0)">
+                        <rect x="-8" y="-8" width="16" height="16" fill="#333" rx="1"/>
+                        <rect x="-6" y="-10" width="4" height="20" fill="#444"/>
+                        <rect x="2" y="-10" width="4" height="20" fill="#444"/>
+                    </g>
+                </g>
+            </g>
+        </g>
+        
+        <!-- Bottom part - Camera Moving around Fixed Object -->
+        <g transform="translate(200, 370)">
+            <!-- Title -->
+            <text x="0" y="-120" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#444" font-weight="bold">
+                Fixed Object, Moving Camera
+            </text>
+            
+            <!-- Subtitle -->
+            <text x="0" y="-100" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#222">
+                Inferring subject center for camera movement
+            </text>
+            
+            <!-- Background reference circle -->
+            <circle cx="0" cy="0" r="90" fill="none" stroke="#ddd" stroke-width="1" stroke-dasharray="5,5"/>
+            
+            <!-- Center point (joint) -->
+            <circle cx="0" cy="0" r="4" fill="#e63946"/>
+            
+            <!-- Fixed Object with joint at center -->
+            <g>
+                <!-- Upper segment - FIXED -->
+                <g>
+                    <rect x="-40" y="-5" width="40" height="10" fill="#4682B4" rx="0"/>
+                    <rect x="-37" y="-7" width="34" height="14" fill="#4682B4" rx="0" opacity="0.6"/>
+                    <circle cx="-25" cy="0" r="3" fill="#333"/>
+                    <circle cx="-10" cy="0" r="3" fill="#333"/>
+                    <circle cx="-40" cy="0" r="8" fill="#555"/>
+                    <circle cx="-40" cy="0" r="6" fill="#666"/>
+                    <circle cx="-40" cy="0" r="2" fill="#333"/>
+                </g>
+                
+                <!-- Joint at center -->
+                <circle cx="0" cy="0" r="8" fill="#555"/>
+                <circle cx="0" cy="0" r="6" fill="#666"/>
+                <circle cx="0" cy="0" r="3" fill="#333"/>
+                
+                <!-- Movable segment - FIXED at -40 degrees -->
+                <g transform="rotate(-40)">
+                    <rect x="0" y="-5" width="40" height="10" fill="#4682B4" rx="0"/>
+                    <rect x="3" y="-7" width="34" height="14" fill="#4682B4" rx="0" opacity="0.6"/>
+                    <circle cx="15" cy="0" r="3" fill="#333"/>
+                    <circle cx="30" cy="0" r="3" fill="#333"/>
+                    <g transform="translate(40, 0)">
+                        <rect x="-8" y="-8" width="16" height="16" fill="#333" rx="1"/>
+                        <rect x="-6" y="-10" width="4" height="20" fill="#444"/>
+                        <rect x="2" y="-10" width="4" height="20" fill="#444"/>
+                    </g>
+                </g>
+            </g>
+            
+            <!-- Moving Camera -->
+            <g id="movingCamera-mobile">
+                <rect x="-10" y="-6" width="20" height="12" fill="#333" rx="2"/>
+                <path d="M 0,0 L 20,-15 L 20,15 Z" fill="#a8201a" fill-opacity="0.4" stroke="#a8201a" stroke-width="1"/>
+                <path d="M 0,0 L 20,15 L 20,-15 Z" fill="#a8201a" fill-opacity="0.4" stroke="#a8201a" stroke-width="1"/>
+            </g>
+        </g>
+
+        </svg>
+        </div>
+      
+        <div class="explanation-box">
+            <p class="explanation-heading">
+              ARticulate infers axes of rotation from minimal user input:
+            </p>
+            <ul class="explanation-list">
+              <li>Left: Rotation of object around its joint (e.g., bending an elbow)</li>
+              <li>Right: Rotation of camera around subject center (e.g., capturing 3D model)</li>
+            </ul>
+            <p class="explanation-footer">
+              Knowing rotation centers enables real-time guidance for angles captured/remaining
+            </p>
+          </div>
+        
+          <style>
+            .animation-container {
+              width:100%;
+              position:relative;
+              padding:0 20px;
+              margin-bottom:10px;        /* ↓ tighten gap */
+            }
+            .desktop-svg { display:block; margin:0 auto 30px; }
+            .mobile-svg  { display:none; margin:0 auto 30px; }
+            @media (max-width:768px) {
+              .desktop-svg { display:none; }
+              .mobile-svg  { display:block !important; } /* force on mobile */
+            }
+        
+            .explanation-box {
+              max-width:720px;
+              margin:10px auto;          /* ↓ tighten gap */
+              background:#f5f5f5;
+              border:1px solid #ddd;
+              border-radius:5px;
+              padding:15px 20px;         /* slight padding tweak */
+              text-align:left;
+            }
+            .explanation-heading {
+              font-weight:bold;
+              margin:0 0 8px;            /* tighten between heading and list */
+              color:#333;
+            }
+            .explanation-list {
+              list-style:inside disc;
+              margin:0 0 8px;
+              color:#555;
+              line-height:1.4;
+            }
+            .explanation-list li { margin-bottom:4px; }
+            .explanation-footer {
+              margin:0;
+              color:#555;
+              line-height:1.4;
+              font-size:0.9rem;
+            }
+          </style>
+        
+          <script>
+            document.addEventListener('DOMContentLoaded',function(){
+              const md = document.getElementById('movableSegment-desktop'),
+                    mc = document.getElementById('movingCamera-desktop'),
+                    mm = document.getElementById('movableSegment-mobile'),
+                    mcm= document.getElementById('movingCamera-mobile');
+              let t=0, s=0.03;
+              (function anim(){
+                t+=s;
+                const a=80*Math.sin(t)-40;
+                if(md) md.setAttribute('transform',`rotate(${a})`);
+                if(mm) mm.setAttribute('transform',`rotate(${a})`);
+                const ca=t%(2*Math.PI),
+                      xd=100*Math.cos(ca), yd=100*Math.sin(ca),
+                      rm=(Math.atan2(yd,xd)*180/Math.PI)+180,
+                      xm= 90*Math.cos(ca), ym= 90*Math.sin(ca),
+                      rr=(Math.atan2(ym,xm)*180/Math.PI)+180;
+                if(mc) mc.setAttribute('transform',`translate(${xd},${yd}) rotate(${rm})`);
+                if(mcm) mcm.setAttribute('transform',`translate(${xm},${ym}) rotate(${rr})`);
+                requestAnimationFrame(anim);
+              })();
+            });
+          </script>
+        </div>
+      
+        <style>
+          .animation-container {
+            width: 100%;
+            position: relative;
+            padding: 0 20px;
+            margin-bottom: 40px;
+          }
+          .desktop-svg {
+            display: block;
+            margin-bottom: 30px;
+          }
+          .mobile-svg {
+            display: none;
+            margin-bottom: 30px;
+          }
+          @media (max-width: 768px) {
+            .desktop-svg { display: none; }
+            .mobile-svg  { display: block; }
+          }
+          .explanation-box {
+            max-width: 720px;
+            margin: 0 auto 40px;
+            background: #f5f5f5;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 20px;
+            text-align: left;
+          }
+          .explanation-heading {
+            font-weight: bold;
+            margin: 0 0 12px;
+            color: #333;
+            font-size: 1rem;
+          }
+          .explanation-list {
+            list-style: inside disc;
+            margin: 0 0 12px;
+            color: #555;
+            line-height: 1.4;
+          }
+          .explanation-list li {
+            margin-bottom: 6px;
+          }
+          .explanation-footer {
+            margin: 0;
+            color: #555;
+            line-height: 1.4;
+            font-size: 0.9rem;
+          }
+        </style>
+      
+        <script>
+          document.addEventListener('DOMContentLoaded', function() {
+            const md = document.getElementById('movableSegment-desktop');
+            const mc = document.getElementById('movingCamera-desktop');
+            const mm = document.getElementById('movableSegment-mobile');
+            const mcm = document.getElementById('movingCamera-mobile');
+            let t = 0, speed = 0.03;
+            function anim() {
+              t += speed;
+              const a = 80 * Math.sin(t) - 40;
+              if (md) md.setAttribute('transform', `rotate(${a})`);
+              if (mm) mm.setAttribute('transform', `rotate(${a})`);
+              const ca = t % (2 * Math.PI);
+              if (mc) {
+                const x = 100*Math.cos(ca), y = 100*Math.sin(ca),
+                      r = (Math.atan2(y,x)*180/Math.PI)+180;
+                mc.setAttribute('transform', `translate(${x},${y}) rotate(${r})`);
+              }
+              if (mcm) {
+                const x = 90*Math.cos(ca), y = 90*Math.sin(ca),
+                      r = (Math.atan2(y,x)*180/Math.PI)+180;
+                mcm.setAttribute('transform', `translate(${x},${y}) rotate(${r})`);
+              }
+              requestAnimationFrame(anim);
+            }
+            anim();
+          });
+        </script>
+      </div>
+      
     <div id="abstract">
         <h2>Interactive Visualizer</h2>
         <p>(Under Construction)</p>
