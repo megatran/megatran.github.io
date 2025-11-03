@@ -200,16 +200,14 @@
       </div>
     </div>
 
-    <div id="rotation-comparison" style="width:100%; margin:40px 0 20px; text-align:center;">
-        <h3 style="font-size:calc(1rem + 0.3vw); color:#444; margin-bottom:30px;">
-          Same Math, Different Perspectives
-        </h3>
+    <div id="rotation-comparison" style="max-width:900px; margin:40px auto 20px;">
+        <h2>Same Math, Different Perspectives</h2>
       
         <div class="animation-container">
           <!-- SVG for desktop -->
-          <svg width="100%" height="300" viewBox="0 0 800 300" xmlns="http://www.w3.org/2000/svg" class="desktop-svg">
+          <svg width="100%" height="350" viewBox="0 0 900 350" xmlns="http://www.w3.org/2000/svg" class="desktop-svg">
             <!-- Left Side – Rotating Object, Fixed Camera -->
-            <g transform="translate(200, 200)">
+            <g transform="translate(225, 225)">
               <circle cx="0" cy="0" r="100" fill="none" stroke="#ddd" stroke-width="1" stroke-dasharray="5,5"/>
               <circle cx="0" cy="0" r="4" fill="#e63946"/>
               <g transform="translate(120, 0) rotate(180)">
@@ -251,7 +249,7 @@
             </g>
       
             <!-- Right Side – Fixed Object, Moving Camera -->
-            <g transform="translate(600, 200)">
+            <g transform="translate(675, 225)">
               <circle cx="0" cy="0" r="100" fill="none" stroke="#ddd" stroke-width="1" stroke-dasharray="5,5"/>
               <circle cx="0" cy="0" r="4" fill="#e63946"/>
               <g>
@@ -429,8 +427,7 @@
             .animation-container {
               width:100%;
               position:relative;
-              padding:0 20px;
-              margin-bottom:10px;        /* ↓ tighten gap */
+              margin-bottom:10px;
             }
             .desktop-svg { display:block; margin:0 auto 30px; }
             .mobile-svg  { display:none; margin:0 auto 30px; }
@@ -440,12 +437,12 @@
             }
         
             .explanation-box {
-              max-width:720px;
-              margin:10px auto;          /* ↓ tighten gap */
+              width:100%;
+              margin:10px 0;
               background:#f5f5f5;
               border:1px solid #ddd;
               border-radius:5px;
-              padding:15px 20px;         /* slight padding tweak */
+              padding:15px 20px;
               text-align:left;
             }
             .explanation-heading {
@@ -454,10 +451,11 @@
               color:#333;
             }
             .explanation-list {
-              list-style:inside disc;
+              list-style-type: disc;
               margin:0 0 8px;
+              padding-left: 20px;
               color:#555;
-              line-height:1.4;
+              line-height:1.7;
             }
             .explanation-list li { margin-bottom:4px; }
             .explanation-footer {
@@ -492,94 +490,240 @@
             });
           </script>
         </div>
-      
-        <style>
-          .animation-container {
-            width: 100%;
-            position: relative;
-            padding: 0 20px;
-            margin-bottom: 40px;
-          }
-          .desktop-svg {
-            display: block;
-            margin-bottom: 30px;
-          }
-          .mobile-svg {
-            display: none;
-            margin-bottom: 30px;
-          }
-          @media (max-width: 768px) {
-            .desktop-svg { display: none; }
-            .mobile-svg  { display: block; }
-          }
-          .explanation-box {
-            max-width: 720px;
-            margin: 0 auto 40px;
-            background: #f5f5f5;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            padding: 20px;
-            text-align: left;
-          }
-          .explanation-heading {
-            font-weight: bold;
-            margin: 0 0 12px;
-            color: #333;
-            font-size: 1rem;
-          }
-          .explanation-list {
-            list-style: inside disc;
-            margin: 0 0 12px;
-            color: #555;
-            line-height: 1.4;
-          }
-          .explanation-list li {
-            margin-bottom: 6px;
-          }
-          .explanation-footer {
-            margin: 0;
-            color: #555;
-            line-height: 1.4;
-            font-size: 0.9rem;
-          }
-        </style>
-      
-        <script>
-          document.addEventListener('DOMContentLoaded', function() {
-            const md = document.getElementById('movableSegment-desktop');
-            const mc = document.getElementById('movingCamera-desktop');
-            const mm = document.getElementById('movableSegment-mobile');
-            const mcm = document.getElementById('movingCamera-mobile');
-            let t = 0, speed = 0.03;
-            function anim() {
-              t += speed;
-              const a = 80 * Math.sin(t) - 40;
-              if (md) md.setAttribute('transform', `rotate(${a})`);
-              if (mm) mm.setAttribute('transform', `rotate(${a})`);
-              const ca = t % (2 * Math.PI);
-              if (mc) {
-                const x = 100*Math.cos(ca), y = 100*Math.sin(ca),
-                      r = (Math.atan2(y,x)*180/Math.PI)+180;
-                mc.setAttribute('transform', `translate(${x},${y}) rotate(${r})`);
-              }
-              if (mcm) {
-                const x = 90*Math.cos(ca), y = 90*Math.sin(ca),
-                      r = (Math.atan2(y,x)*180/Math.PI)+180;
-                mcm.setAttribute('transform', `translate(${x},${y}) rotate(${r})`);
-              }
-              requestAnimationFrame(anim);
-            }
-            anim();
-          });
-        </script>
       </div>
       
     <div id="abstract">
         <h2>Interactive Visualizer</h2>
-        <p>(Under Construction)</p>
-        <p>Code coming soon (Unity plugin for Meta Quest Pro and Python visualization)</p>
-        <div id="bunny-container" style="width: 100%; height: 400px; margin: 20px 0; border: 1px solid #eee;"></div>
-        <div id="loading-status">Loading Stanford Bunny...</div>
+        
+        <!-- Usage Instructions -->
+        <div style="background: #e8f4f8; padding: 15px; border-radius: 5px; margin: 20px 0; border-left: 4px solid #3498db;">
+            <h3 style="margin-top: 0; font-size: 1rem;">How to Use</h3>
+            <ol style="margin: 0; padding-left: 20px; font-size: 0.9rem; line-height: 1.7;">
+                <li><strong>Set ground truth center of rotation (CoR):</strong> Hover over bunny point cloud  → click point → click "Set as CoR" (or manually enter X,Y,Z values)</li>
+                <li><strong>Rotate:</strong> Drag X,Y,Z sliders to rotate bunny in real-time</li>
+                <li><strong>Record poses:</strong> Click "Apply & Record Pose" to save current rotation (record 2-3+ poses with <strong>varied multi-axis rotations</strong>)
+                    <div style="background: #fff3cd; padding: 8px; margin-top: 5px; border-left: 3px solid #ffc107; font-size: 0.85em;">
+                        <strong>💡 Tip:</strong> Single-axis rotations (e.g., only changes in Z) could create <strong>underdetermined systems</strong> with <strong>infinitely many solutions</strong> along the rotation axis, making it impossible to uniquely determine the <strong>(x, y, z) coordinates</strong> of the center of rotation. Change multiple axes (e.g., X=30°, Y=45°, Z=20°) for unique solutions.
+                    </div>
+                </li>
+                <li><strong>Estimate:</strong> Click "Estimate Center of Rotation" to see algorithm result (orange marker)</li>
+                <li><strong>Verify:</strong> Click "Show Ground Truth" to compare with exact solution (cyan marker)</li>
+            </ol>
+            <div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid #ccc; font-size: 0.85rem; color: #666;">
+                <strong>Camera controls:</strong> Drag to rotate view • Scroll to zoom • Right-click to pan
+            </div>
+        </div>
+        
+        <!-- Main Layout: Controls (Left) + Visualization (Right) -->
+        <div style="display: flex; gap: 15px; margin: 20px 0; flex-wrap: wrap; align-items: flex-start;">
+            
+            <!-- Left Panel: Controls -->
+            <div id="controls-panel" style="flex: 0 0 290px; max-width: 290px; background: #f9f9f9; padding: 10px; border-radius: 8px;">
+                
+                <!-- Visibility Controls -->
+                <div class="collapsible-section" style="margin-bottom: 8px; background: white; border-radius: 5px; border: 1px solid #ddd;">
+                    <div class="section-header" style="padding: 6px 10px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; background: #f5f5f5; border-radius: 5px 5px 0 0; user-select: none;">
+                        <h3 style="margin: 0; font-size: 0.85rem;">Visibility</h3>
+                        <span class="collapse-icon" style="font-size: 0.9rem; transition: transform 0.3s;">▼</span>
+                    </div>
+                    <div class="section-content" style="padding: 8px;">
+                        <div style="display: flex; gap: 12px; font-size: 0.8rem;">
+                            <label style="display: flex; align-items: center; cursor: pointer;">
+                                <input type="checkbox" id="show-original" style="margin-right: 4px;">
+                                <span style="display: inline-block; width: 8px; height: 8px; background: #e74c3c; border-radius: 50%; margin-right: 4px;"></span>
+                                Reference
+                            </label>
+                            <label style="display: flex; align-items: center; cursor: pointer;">
+                                <input type="checkbox" id="show-transformed" checked style="margin-right: 4px;">
+                                <span style="display: inline-block; width: 8px; height: 8px; background: #4a90e2; border-radius: 50%; margin-right: 4px;"></span>
+                                Transformed
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Center of Rotation Controls -->
+                <div class="collapsible-section" style="margin-bottom: 8px; background: white; border-radius: 5px; border: 1px solid #ddd;">
+                    <div class="section-header" style="padding: 6px 10px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; background: #f5f5f5; border-radius: 5px 5px 0 0; user-select: none;">
+                        <h3 style="margin: 0; font-size: 0.85rem;">Center of Rotation</h3>
+                        <span class="collapse-icon" style="font-size: 0.9rem; transition: transform 0.3s;">▼</span>
+                    </div>
+                    <div class="section-content" style="padding: 8px;">
+                <div style="display: flex; gap: 5px; align-items: center; flex-wrap: wrap; font-size: 0.85rem;">
+                    <div>
+                        <label style="font-weight: bold; margin-right: 3px;">X:</label>
+                        <input type="number" id="cor-x" step="0.001" style="width: 70px; padding: 3px; font-size: 0.8rem;" value="0">
+                    </div>
+                    <div>
+                        <label style="font-weight: bold; margin-right: 3px;">Y:</label>
+                        <input type="number" id="cor-y" step="0.001" style="width: 70px; padding: 3px; font-size: 0.8rem;" value="0">
+                    </div>
+                    <div>
+                        <label style="font-weight: bold; margin-right: 3px;">Z:</label>
+                        <input type="number" id="cor-z" step="0.001" style="width: 70px; padding: 3px; font-size: 0.8rem;" value="0">
+                    </div>
+                </div>
+                <div style="margin-top: 8px; display: flex; gap: 5px;">
+                    <button id="set-cor-btn" class="btn secondary" style="flex: 1; font-size: 0.75rem; padding: 5px;">Set CoR</button>
+                    <button id="reset-cor-btn" class="btn secondary" style="flex: 1; font-size: 0.75rem; padding: 5px;">Reset Default</button>
+                </div>
+                <div style="margin-top: 6px; font-size: 0.7rem; color: #777; font-style: italic; text-align: center;">
+                    💡 Hover over 3D model to pick a point
+                </div>
+                    </div>
+                </div>
+            
+                <!-- Rotation Controls -->
+                <div class="collapsible-section" style="margin-bottom: 8px; background: white; border-radius: 5px; border: 1px solid #ddd;">
+                    <div class="section-header" style="padding: 6px 10px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; background: #f5f5f5; border-radius: 5px 5px 0 0; user-select: none;">
+                        <h3 style="margin: 0; font-size: 0.85rem;">Rotation Controls (radians)</h3>
+                        <span class="collapse-icon" style="font-size: 0.9rem; transition: transform 0.3s;">▼</span>
+                    </div>
+                    <div class="section-content" style="padding: 8px;">
+                
+                <div style="margin: 6px 0;">
+                    <label style="display: inline-block; width: 18px; font-weight: bold; font-size: 0.8rem;">X:</label>
+                    <input type="range" id="rotX" min="-3.14" max="3.14" step="0.01" value="0" style="width: 165px;">
+                    <span id="rotX-value" style="margin-left: 4px; font-family: monospace; font-size: 0.7rem;">0.00</span>
+                </div>
+                
+                <div style="margin: 6px 0;">
+                    <label style="display: inline-block; width: 18px; font-weight: bold; font-size: 0.8rem;">Y:</label>
+                    <input type="range" id="rotY" min="-3.14" max="3.14" step="0.01" value="0" style="width: 165px;">
+                    <span id="rotY-value" style="margin-left: 4px; font-family: monospace; font-size: 0.7rem;">0.00</span>
+                </div>
+                
+                <div style="margin: 6px 0;">
+                    <label style="display: inline-block; width: 18px; font-weight: bold; font-size: 0.8rem;">Z:</label>
+                    <input type="range" id="rotZ" min="-3.14" max="3.14" step="0.01" value="0" style="width: 165px;">
+                    <span id="rotZ-value" style="margin-left: 4px; font-family: monospace; font-size: 0.7rem;">0.00</span>
+                </div>
+                
+                <div style="margin: 12px 0 0 0; display: flex; gap: 6px;">
+                    <button id="record-rotation-btn" class="btn primary" style="flex: 1; font-size: 0.8rem; padding: 6px;">Record Pose</button>
+                    <button id="reset-rotation-btn" class="btn secondary" style="flex: 1; font-size: 0.8rem; padding: 6px;">Reset</button>
+                </div>
+                <div id="record-status" style="margin-top: 6px; font-size: 0.75rem; color: #2ecc71; text-align: center; min-height: 16px;"></div>
+                    </div>
+                </div>
+            
+                <!-- Playback Controls -->
+                <div class="collapsible-section" style="margin-bottom: 8px; background: white; border-radius: 5px; border: 1px solid #ddd;">
+                    <div class="section-header" style="padding: 6px 10px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; background: #f5f5f5; border-radius: 5px 5px 0 0; user-select: none;">
+                        <h4 style="margin: 0; font-size: 0.85rem;">Playback Poses</h4>
+                        <span class="collapse-icon" style="font-size: 0.9rem; transition: transform 0.3s;">▼</span>
+                    </div>
+                    <div class="section-content" style="padding: 8px;">
+                <div style="margin: 5px 0;">
+                    <label style="display: inline-block; width: 38px; font-weight: bold; font-size: 0.8rem;">Pose:</label>
+                    <input type="range" id="playback-slider" min="0" max="0" step="1" value="0" style="width: 150px;">
+                    <span id="playback-value" style="margin-left: 4px; font-family: monospace; font-size: 0.7rem;">0 / 0</span>
+                </div>
+                    </div>
+                </div>
+            
+                <!-- Estimation Controls -->
+                <div class="collapsible-section" style="margin-bottom: 8px; background: white; border-radius: 5px; border: 1px solid #ddd;">
+                    <div class="section-header" style="padding: 6px 10px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; background: #f5f5f5; border-radius: 5px 5px 0 0; user-select: none;">
+                        <h4 style="margin: 0; font-size: 0.85rem;">Estimation</h4>
+                        <span class="collapse-icon" style="font-size: 0.9rem; transition: transform 0.3s;">▼</span>
+                    </div>
+                    <div class="section-content" style="padding: 8px;">
+                
+                <!-- Algorithm Explanation -->
+                <div style="margin: 5px 0 10px 0; padding: 8px; background: #f5f5f5; border-left: 3px solid #2196f3; font-size: 0.75rem;">
+                    <strong>🔬 Algorithm:</strong> Estimate center of rotation <strong>c</strong> using <strong>least squares</strong>:
+                    <ol style="margin: 5px 0; padding-left: 18px; line-height: 1.4;">
+                        <li>Extract rotation matrix <strong>R<sub>i</sub></strong> and translation <strong>t<sub>i</sub></strong></li>
+                        <li>Build system <strong>M</strong><em>c</em> = <strong>t</strong> where <strong>M</strong> = [<strong>I</strong> - <strong>R</strong><sub>1</sub>; ...; <strong>I</strong> - <strong>R</strong><sub>n</sub>]</li>
+                        <li>Solve: <em>c</em> = argmin ||<strong>M</strong><em>c</em> - <strong>t</strong>||²</li>
+                    </ol>
+                </div>
+                
+                <button id="estimate-cor-btn" class="btn primary" style="width: 100%; font-size: 0.85rem; padding: 8px;">Estimate Center of Rotation</button>
+                <div id="estimation-status" style="margin-top: 8px; font-size: 0.8rem; color: #666;">
+                    Record at least 2 different poses to estimate the center of rotation.
+                </div>
+                    </div>
+                </div>
+                
+            </div>
+            <!-- End Left Panel -->
+            
+            <!-- Right Panel: Visualization -->
+            <div style="flex: 1; min-width: 450px;">
+                <h3 style="margin: 0 0 10px 0; font-size: 1rem; text-align: center;">3D Visualization</h3>
+                <div id="bunny-container-trans" style="width: 100%; height: 750px; border: 1px solid #ddd; border-radius: 4px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);"></div>
+                
+                <!-- Status Message -->
+                <div id="loading-status" style="text-align: center; color: #666; margin: 10px 0; font-size: 0.9rem;">Loading Stanford Bunny...</div>
+                
+                <!-- Legend Below Visualization -->
+                <div style="background: #f9f9f9; padding: 12px; border-radius: 5px; margin-top: 15px; border: 1px solid #ddd;">
+                    <h4 style="margin: 0 0 10px 0; font-size: 0.9rem;">Color Legend</h4>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 8px; font-size: 0.8rem;">
+                        <div><span style="display: inline-block; width: 10px; height: 10px; background: #e74c3c; border-radius: 50%; margin-right: 5px;"></span> Red: Reference Points</div>
+                        <div><span style="display: inline-block; width: 10px; height: 10px; background: #4a90e2; border-radius: 50%; margin-right: 5px;"></span> Blue: Transformed Points</div>
+                        <div><span style="display: inline-block; width: 10px; height: 10px; background: #9b59b6; border-radius: 50%; margin-right: 5px;"></span> Purple: Center of Mass</div>
+                        <div><span style="display: inline-block; width: 10px; height: 10px; background: #2ecc71; border-radius: 50%; margin-right: 5px;"></span> Green: Ground Truth CoR</div>
+                        <div><span style="display: inline-block; width: 10px; height: 10px; background: #f39c12; border-radius: 50%; margin-right: 5px;"></span> Orange: Estimated CoR</div>
+                    </div>
+                </div>
+            </div>
+            <!-- End Right Panel -->
+            
+        </div>
+        <!-- End Main Layout -->
+        
+        <!-- Tooltip for point picking -->
+        <div id="point-tooltip" style="position: fixed; display: none; background: rgba(0,0,0,0.75); color: white; padding: 12px 15px 12px 12px; border-radius: 8px; font-size: 0.85rem; z-index: 1000; pointer-events: none; box-shadow: 0 4px 12px rgba(0,0,0,0.3); border: 2px solid rgba(255,255,255,0.3);">
+            <button id="tooltip-close" style="position: absolute; top: 5px; right: 5px; background: none; border: none; color: white; cursor: pointer; font-size: 1.2rem; opacity: 0.6; transition: opacity 0.2s; padding: 0; width: 20px; height: 20px; line-height: 20px;">×</button>
+            <div id="tooltip-coords" style="margin-bottom: 10px; font-family: monospace; margin-right: 20px;"></div>
+            <button id="tooltip-set-cor" style="padding: 6px 12px; border: none; border-radius: 4px; background: rgba(46,204,113,0.85); color: white; cursor: pointer; font-weight: bold; transition: all 0.2s;">Set as CoR</button>
+        </div>
+        
+        <style>
+            #bunny-container-trans canvas {
+                cursor: crosshair;
+            }
+            .section-header:hover {
+                background: #e8e8e8 !important;
+            }
+            .section-content {
+                max-height: 1000px;
+                overflow: hidden;
+                transition: max-height 0.3s ease-out;
+            }
+            .section-content.collapsed {
+                max-height: 0 !important;
+                padding: 0 15px !important;
+            }
+            .collapse-icon.collapsed {
+                transform: rotate(-90deg);
+            }
+            
+            /* Responsive layout for small screens */
+            @media (max-width: 850px) {
+                #controls-panel {
+                    flex: 1 1 100% !important;
+                    max-width: 100% !important;
+                }
+                .section-content {
+                    max-height: 2000px !important;
+                }
+            }
+            
+            #tooltip-set-cor:hover {
+                background: rgba(39,174,96,1) !important;
+                transform: scale(1.05);
+            }
+            #tooltip-set-cor:active {
+                transform: scale(0.98);
+            }
+            #tooltip-close:hover {
+                opacity: 1 !important;
+            }
+        </style>
     </div>
 
     <div id="acknowledgements">
@@ -589,6 +733,7 @@
     </p>
     </div>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.11.0/math.min.js"></script>
     <script async src="https://unpkg.com/es-module-shims/dist/es-module-shims.js"></script>
     <script type="importmap">
     {
@@ -603,20 +748,194 @@
         import { OrbitControls } from 'https://unpkg.com/three@0.160.0/examples/jsm/controls/OrbitControls.js';
         import { OBJLoader } from 'https://unpkg.com/three@0.160.0/examples/jsm/loaders/OBJLoader.js';
     
-        // Initialize scene
-        function init() {
-            const container = document.getElementById('bunny-container');
-            const loadingStatus = document.getElementById('loading-status');
+        // Global state
+        let bunnyPoints = [];
+        let centerOfMass = null;
+        let centerOfRotation = null;
+        let recordedRotations = [];
+        let originalBunnyPoints = [];
+        
+        // Scene objects
+        let container;
+        let sceneOrig, sceneTrans;
+        let cameraOrig, cameraTrans;
+        let rendererOrig, rendererTrans;
+        let controlsOrig, controlsTrans;
+        let bunnyOrig, bunnyTrans;
+        let markers = { orig: {}, trans: {} };
+        
+        // Raycasting for point picking
+        let raycaster = new THREE.Raycaster();
+        raycaster.params.Points.threshold = 0.01;
+        let mouse = new THREE.Vector2();
+        let selectedPoint = null;
+        let hoveredPoint = null;
+        let isTooltipLocked = false; // Global lock state
+        let currentHoverPoint = null; // Global hover point
+        
+        // Matrix operations
+        function createRotationMatrix(angleX, angleY, angleZ) {
+            const Rx = [
+                [1, 0, 0],
+                [0, Math.cos(angleX), -Math.sin(angleX)],
+                [0, Math.sin(angleX), Math.cos(angleX)]
+            ];
+            const Ry = [
+                [Math.cos(angleY), 0, Math.sin(angleY)],
+                [0, 1, 0],
+                [-Math.sin(angleY), 0, Math.cos(angleY)]
+            ];
+            const Rz = [
+                [Math.cos(angleZ), -Math.sin(angleZ), 0],
+                [Math.sin(angleZ), Math.cos(angleZ), 0],
+                [0, 0, 1]
+            ];
             
-            if (!container) {
-                console.error('Container not found');
-                return;
+            // R = Rz @ Ry @ Rx
+            const RyRx = math.multiply(Ry, Rx);
+            return math.multiply(Rz, RyRx);
+        }
+        
+        function applyRotation(points, angleX, angleY, angleZ, center) {
+            const R = createRotationMatrix(angleX, angleY, angleZ);
+            const rotated = [];
+            
+            for (let i = 0; i < points.length; i++) {
+                const p = points[i];
+                const pCentered = [p[0] - center[0], p[1] - center[1], p[2] - center[2]];
+                const pRotated = [
+                    R[0][0] * pCentered[0] + R[0][1] * pCentered[1] + R[0][2] * pCentered[2],
+                    R[1][0] * pCentered[0] + R[1][1] * pCentered[1] + R[1][2] * pCentered[2],
+                    R[2][0] * pCentered[0] + R[2][1] * pCentered[1] + R[2][2] * pCentered[2]
+                ];
+                rotated.push([
+                    pRotated[0] + center[0],
+                    pRotated[1] + center[1],
+                    pRotated[2] + center[2]
+                ]);
             }
             
+            return rotated;
+        }
+        
+        function computeCenterOfMass(points) {
+            const sum = [0, 0, 0];
+            for (let i = 0; i < points.length; i++) {
+                sum[0] += points[i][0];
+                sum[1] += points[i][1];
+                sum[2] += points[i][2];
+            }
+            return [sum[0] / points.length, sum[1] / points.length, sum[2] / points.length];
+        }
+        
+        function addMarker(scene, position, color, size, name) {
+            const geometry = new THREE.SphereGeometry(size, 16, 16);
+            const material = new THREE.MeshBasicMaterial({ color: color });
+            const sphere = new THREE.Mesh(geometry, material);
+            sphere.position.set(position[0], position[1], position[2]);
+            sphere.name = name;
+            scene.add(sphere);
+            return sphere;
+        }
+        
+        function removeMarkerByName(scene, name) {
+            const marker = scene.getObjectByName(name);
+            if (marker) {
+                scene.remove(marker);
+            }
+        }
+        
+        function updatePointCloud(mesh, points) {
+            if (!mesh) return;
+            
+            const positions = new Float32Array(points.length * 3);
+            for (let i = 0; i < points.length; i++) {
+                positions[i * 3] = points[i][0];
+                positions[i * 3 + 1] = points[i][1];
+                positions[i * 3 + 2] = points[i][2];
+            }
+            
+            mesh.geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+            mesh.geometry.attributes.position.needsUpdate = true;
+            mesh.geometry.computeBoundingSphere();
+        }
+        
+        function estimateCenterOfRotation(useGroundTruth = false) {
+            if (recordedRotations.length < 2) {
+                return null;
+            }
+            
+            const A = [];
+            const b = [];
+            
+            const refPoints = recordedRotations[0].points;
+            
+            for (let i = 1; i < recordedRotations.length; i++) {
+                const angles = recordedRotations[i].angles;
+                const currentPoints = recordedRotations[i].points;
+                
+                let R, t;
+                
+                if (useGroundTruth) {
+                    // Ground truth: compute exact transformation
+                    R = createRotationMatrix(angles[0], angles[1], angles[2]);
+                    const Cm_prime = [-centerOfRotation[0], -centerOfRotation[1], -centerOfRotation[2]];
+                    t = [
+                        R[0][0] * Cm_prime[0] + R[0][1] * Cm_prime[1] + R[0][2] * Cm_prime[2] - Cm_prime[0],
+                        R[1][0] * Cm_prime[0] + R[1][1] * Cm_prime[1] + R[1][2] * Cm_prime[2] - Cm_prime[1],
+                        R[2][0] * Cm_prime[0] + R[2][1] * Cm_prime[1] + R[2][2] * Cm_prime[2] - Cm_prime[2]
+                    ];
+                } else {
+                    // Estimate using ICP-like approach (simplified)
+                    R = createRotationMatrix(angles[0], angles[1], angles[2]);
+                    
+                    // Compute translation from center of mass difference
+                    const refCom = computeCenterOfMass(refPoints);
+                    const curCom = computeCenterOfMass(currentPoints);
+                    
+                    t = [
+                        curCom[0] - (R[0][0] * refCom[0] + R[0][1] * refCom[1] + R[0][2] * refCom[2]),
+                        curCom[1] - (R[1][0] * refCom[0] + R[1][1] * refCom[1] + R[1][2] * refCom[2]),
+                        curCom[2] - (R[2][0] * refCom[0] + R[2][1] * refCom[1] + R[2][2] * refCom[2])
+                    ];
+                }
+                
+                // Build linear system: (I - R) * c = t
+                const I_minus_R = [
+                    [1 - R[0][0], -R[0][1], -R[0][2]],
+                    [-R[1][0], 1 - R[1][1], -R[1][2]],
+                    [-R[2][0], -R[2][1], 1 - R[2][2]]
+                ];
+                
+                A.push(I_minus_R[0]);
+                A.push(I_minus_R[1]);
+                A.push(I_minus_R[2]);
+                b.push(t[0], t[1], t[2]);
+            }
+            
+            // Solve least squares: A * c = b
+            try {
+                const AMatrix = math.matrix(A);
+                const bVector = math.matrix(b);
+                const estimatedCenter = math.lusolve(math.multiply(math.transpose(AMatrix), AMatrix), 
+                                                     math.multiply(math.transpose(AMatrix), bVector));
+                return [estimatedCenter.get([0, 0]), estimatedCenter.get([1, 0]), estimatedCenter.get([2, 0])];
+            } catch (e) {
+                console.error("Failed to estimate center:", e);
+                return null;
+            }
+        }
+        
+        function initScene(container, isOriginal) {
             const scene = new THREE.Scene();
             scene.background = new THREE.Color(0xf5f5f5);
     
-            const camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
+            const camera = new THREE.PerspectiveCamera(
+                50, 
+                container.clientWidth / container.clientHeight, 
+                0.01, 
+                10
+            );
             camera.position.set(0.3, 0.3, 0.3);
             camera.lookAt(0, 0, 0);
     
@@ -624,7 +943,7 @@
             renderer.setSize(container.clientWidth, container.clientHeight);
             container.appendChild(renderer.domElement);
     
-            // Add lights
+            // Lights
             const ambientLight = new THREE.AmbientLight(0x808080);
             scene.add(ambientLight);
             
@@ -636,66 +955,162 @@
             backLight.position.set(-1, -1, -1);
             scene.add(backLight);
     
-            // Add grid helper for orientation
-            const gridHelper = new THREE.GridHelper(1, 10, 0x888888, 0xcccccc);
+            // Grid and axes
+            const gridHelper = new THREE.GridHelper(0.3, 10, 0x888888, 0xcccccc);
             scene.add(gridHelper);
             
-            // Add axes helper
-            const axesHelper = new THREE.AxesHelper(0.5);
+            const axesHelper = new THREE.AxesHelper(0.15);
             scene.add(axesHelper);
     
-            // Add controls
+            // Controls - enable mouse interaction
             const controls = new OrbitControls(camera, renderer.domElement);
             controls.enableDamping = true;
             controls.dampingFactor = 0.05;
-    
-            // Load Stanford bunny model from GitHub
+            controls.enableZoom = true;
+            controls.enableRotate = true;
+            controls.enablePan = true;
+            controls.mouseButtons = {
+                LEFT: THREE.MOUSE.ROTATE,
+                MIDDLE: THREE.MOUSE.DOLLY,
+                RIGHT: THREE.MOUSE.PAN
+            };
+            
+            return { scene, camera, renderer, controls };
+        }
+        
+        // Add a flag to prevent infinite loop in camera sync
+        let isSyncing = false;
+        
+        function syncCameras(sourceControls, targetControls, targetCamera) {
+            if (isSyncing) return; // Prevent infinite loop
+            isSyncing = true;
+            
+            targetCamera.position.copy(sourceControls.object.position);
+            targetCamera.quaternion.copy(sourceControls.object.quaternion);
+            targetControls.target.copy(sourceControls.target);
+            targetControls.update();
+            
+            isSyncing = false;
+        }
+        
+        function init() {
+            container = document.getElementById('bunny-container-trans');
+            const loadingStatus = document.getElementById('loading-status');
+            
+            if (!container) {
+                console.error('Container not found');
+                return;
+            }
+            
+            // Initialize single scene
+            const setup = initScene(container, false);
+            sceneTrans = setup.scene;
+            sceneOrig = setup.scene; // Use same scene for both
+            cameraTrans = setup.camera;
+            cameraOrig = setup.camera; // Use same camera for both
+            rendererTrans = setup.renderer;
+            rendererOrig = setup.renderer; // Use same renderer for both
+            controlsTrans = setup.controls;
+            controlsOrig = setup.controls; // Use same controls for both
+            
+            // Load Stanford bunny
             const loader = new OBJLoader();
             loader.load(
                 'https://raw.githubusercontent.com/alecjacobson/common-3d-test-models/master/data/stanford-bunny.obj',
                 function(object) {
-                    // Center and scale the model
-                    const bbox = new THREE.Box3().setFromObject(object);
-                    const center = bbox.getCenter(new THREE.Vector3());
-                    const size = bbox.getSize(new THREE.Vector3());
-                    
-                    const maxDim = Math.max(size.x, size.y, size.z);
-                    const scale = 0.2 / maxDim;
-                    
-                    object.position.sub(center);
-                    object.scale.multiplyScalar(scale);
-                    
-                    // Set material
+                    // Extract vertices
                     object.traverse(function(child) {
                         if (child instanceof THREE.Mesh) {
-                            child.material = new THREE.MeshStandardMaterial({
-                                color: 0xffffff,
-                                roughness: 0.5,
-                                metalness: 0.1
-                            });
+                            const positions = child.geometry.attributes.position.array;
+                            for (let i = 0; i < positions.length; i += 3) {
+                                bunnyPoints.push([positions[i], positions[i + 1], positions[i + 2]]);
+                            }
                         }
                     });
                     
-                    scene.add(object);
-                    
-                    // Update loading status
-                    if (loadingStatus) {
-                        loadingStatus.textContent = "Use mouse to rotate, scroll to zoom.";
-                        setTimeout(() => {
-                            loadingStatus.style.color = "#4CAF50";
-                        }, 500);
+                    // Normalize bunny to reasonable size
+                    let minVals = [Infinity, Infinity, Infinity];
+                    let maxVals = [-Infinity, -Infinity, -Infinity];
+                    for (let i = 0; i < bunnyPoints.length; i++) {
+                        for (let j = 0; j < 3; j++) {
+                            minVals[j] = Math.min(minVals[j], bunnyPoints[i][j]);
+                            maxVals[j] = Math.max(maxVals[j], bunnyPoints[i][j]);
+                        }
                     }
+                    const center = [(minVals[0] + maxVals[0]) / 2, (minVals[1] + maxVals[1]) / 2, (minVals[2] + maxVals[2]) / 2];
+                    const scale = 0.2 / Math.max(maxVals[0] - minVals[0], maxVals[1] - minVals[1], maxVals[2] - minVals[2]);
+                    
+                    for (let i = 0; i < bunnyPoints.length; i++) {
+                        bunnyPoints[i] = [
+                            (bunnyPoints[i][0] - center[0]) * scale,
+                            (bunnyPoints[i][1] - center[1]) * scale,
+                            (bunnyPoints[i][2] - center[2]) * scale
+                        ];
+                    }
+                    
+                    originalBunnyPoints = JSON.parse(JSON.stringify(bunnyPoints));
+                    centerOfMass = computeCenterOfMass(bunnyPoints);
+                    centerOfRotation = [...centerOfMass];
+                    
+                    // Create point cloud visualizations
+                    const geometry = new THREE.BufferGeometry();
+                    const positions = new Float32Array(bunnyPoints.length * 3);
+                    for (let i = 0; i < bunnyPoints.length; i++) {
+                        positions[i * 3] = bunnyPoints[i][0];
+                        positions[i * 3 + 1] = bunnyPoints[i][1];
+                        positions[i * 3 + 2] = bunnyPoints[i][2];
+                    }
+                    geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+                    
+                    // Add both original (red) and transformed (blue) point clouds to the same scene
+                    const materialOrig = new THREE.PointsMaterial({ color: 0xe74c3c, size: 0.002 });
+                    bunnyOrig = new THREE.Points(geometry.clone(), materialOrig);
+                    bunnyOrig.visible = false; // Hidden by default
+                    sceneTrans.add(bunnyOrig);
+                    
+                    const materialTrans = new THREE.PointsMaterial({ color: 0x4a90e2, size: 0.002 });
+                    bunnyTrans = new THREE.Points(geometry.clone(), materialTrans);
+                    sceneTrans.add(bunnyTrans);
+                    
+                    // Add markers (all to the same scene)
+                    markers.orig.com = addMarker(sceneTrans, centerOfMass, 0x9b59b6, 0.005, 'COM');
+                    markers.orig.cor = addMarker(sceneTrans, centerOfRotation, 0x2ecc71, 0.008, 'COR');
+                    markers.trans.com = markers.orig.com; // Same marker
+                    markers.trans.cor = markers.orig.cor; // Same marker
+                    
+                    // Initialize recorded rotations
+                    recordedRotations.push({
+                        angles: [0, 0, 0],
+                        points: JSON.parse(JSON.stringify(bunnyPoints))
+                    });
+                    
+                    if (loadingStatus) {
+                        loadingStatus.textContent = "Loaded! Use sliders to rotate, then record poses.";
+                            loadingStatus.style.color = "#4CAF50";
+                    }
+                    
+                    // Initialize CoR input fields
+                    document.getElementById('cor-x').value = centerOfRotation[0].toFixed(4);
+                    document.getElementById('cor-y').value = centerOfRotation[1].toFixed(4);
+                    document.getElementById('cor-z').value = centerOfRotation[2].toFixed(4);
+                    
+                    // Initialize playback slider
+                    document.getElementById('playback-value').textContent = '1 / 1';
+                    
+                    setupControls();
+                    
+                    // Setup point picking AFTER bunny meshes are created
+                    setupPointPicking(container, bunnyTrans, sceneTrans, cameraTrans);
                 },
                 function(xhr) {
                     if (loadingStatus) {
                         loadingStatus.textContent = `Loading: ${Math.round(xhr.loaded / xhr.total * 100)}%`;
                     }
-                    console.log((xhr.loaded / xhr.total * 100) + '% loaded');
                 },
                 function(error) {
                     console.error('Error loading model:', error);
                     if (loadingStatus) {
-                        loadingStatus.textContent = "Error loading model. Please check console for details.";
+                        loadingStatus.textContent = "Error loading model.";
                         loadingStatus.style.color = "#f44336";
                     }
                 }
@@ -704,24 +1119,532 @@
             // Animation loop
             function animate() {
                 requestAnimationFrame(animate);
-                controls.update();
-                renderer.render(scene, camera);
+                controlsOrig.update();
+                controlsTrans.update();
+                rendererOrig.render(sceneOrig, cameraOrig);
+                rendererTrans.render(sceneTrans, cameraTrans);
             }
     
             // Handle resize
             function onWindowResize() {
-                camera.aspect = container.clientWidth / container.clientHeight;
-                camera.updateProjectionMatrix();
-                renderer.setSize(container.clientWidth, container.clientHeight);
+                if (!container) return;
+                
+                const w = container.clientWidth, h = container.clientHeight;
+                
+                // Update camera and renderer (they're the same for orig/trans now)
+                cameraTrans.aspect = w / h;
+                cameraTrans.updateProjectionMatrix();
+                rendererTrans.setSize(w, h);
             }
     
             window.addEventListener('resize', onWindowResize, false);
             
-            // Start animation
             animate();
         }
     
-        // Initialize when DOM is loaded
+        // Helper function to reset tooltip state (global)
+        function resetTooltip() {
+            const tooltip = document.getElementById('point-tooltip');
+            isTooltipLocked = false;
+            currentHoverPoint = null;
+            tooltip.style.display = 'none';
+            tooltip.style.border = '2px solid rgba(255,255,255,0.3)';
+            tooltip.style.background = 'rgba(0,0,0,0.75)';
+            tooltip.style.pointerEvents = 'none';
+        }
+        
+        function setupPointPicking(container, bunnyMesh, scene, camera) {
+            const tooltip = document.getElementById('point-tooltip');
+            const tooltipCoords = document.getElementById('tooltip-coords');
+            const tooltipBtn = document.getElementById('tooltip-set-cor');
+            const tooltipClose = document.getElementById('tooltip-close');
+            
+            // Hover handler - show tooltip as mouse moves (only if not locked)
+            container.addEventListener('mousemove', (event) => {
+                if (isTooltipLocked) return; // Don't update if locked
+                
+                const rect = container.getBoundingClientRect();
+                mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+                mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+                
+                raycaster.setFromCamera(mouse, camera);
+                const intersects = raycaster.intersectObject(bunnyMesh);
+                
+                if (intersects.length > 0) {
+                    const point = intersects[0].point;
+                    currentHoverPoint = [point.x, point.y, point.z];
+                    
+                    // Show tooltip at cursor position (offset so button is visible)
+                    tooltip.style.display = 'block';
+                    tooltip.style.left = (event.clientX + 15) + 'px';
+                    tooltip.style.top = (event.clientY - 60) + 'px';
+                    tooltip.style.pointerEvents = 'none'; // Keep it non-interactive while hovering
+                    tooltip.style.border = '2px solid rgba(255,255,255,0.3)';
+                    
+                    tooltipCoords.innerHTML = `<strong>Point:</strong><br>X: ${point.x.toFixed(4)}<br>Y: ${point.y.toFixed(4)}<br>Z: ${point.z.toFixed(4)}`;
+                } else {
+                    // Hide tooltip when not hovering over bunny
+                    tooltip.style.display = 'none';
+                }
+            });
+            
+            // Click handler - lock tooltip in place (or update to new point if already locked)
+            container.addEventListener('click', (event) => {
+                // Get point at click location
+                const rect = container.getBoundingClientRect();
+                mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+                mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+                
+                raycaster.setFromCamera(mouse, camera);
+                const intersects = raycaster.intersectObject(bunnyMesh);
+                
+                if (intersects.length > 0) {
+                    const point = intersects[0].point;
+                    currentHoverPoint = [point.x, point.y, point.z];
+                    
+                    // Lock this point (even if another was already locked)
+                    isTooltipLocked = true;
+                    selectedPoint = [...currentHoverPoint];
+                    
+                    // Make tooltip interactive and highlight it
+                    tooltip.style.display = 'block';
+                    tooltip.style.pointerEvents = 'auto';
+                    tooltip.style.border = '2px solid rgba(46,204,113,0.8)';
+                    tooltip.style.background = 'rgba(0,0,0,0.85)';
+                    tooltip.style.left = (event.clientX + 15) + 'px';
+                    tooltip.style.top = (event.clientY - 60) + 'px';
+                    
+                    tooltipCoords.innerHTML = `<strong>📍 Selected Point:</strong><br>X: ${selectedPoint[0].toFixed(4)}<br>Y: ${selectedPoint[1].toFixed(4)}<br>Z: ${selectedPoint[2].toFixed(4)}`;
+                    
+                    console.log('Point locked. Click "Set as CoR" to apply.');
+                } else if (isTooltipLocked) {
+                    // Clicked on bunny container but not on bunny itself - reset tooltip
+                    resetTooltip();
+                    console.log('Clicked off bunny - tooltip reset.');
+                }
+            });
+            
+            // Mouse leave - hide tooltip only if not locked
+            container.addEventListener('mouseleave', () => {
+                if (!isTooltipLocked) {
+                    tooltip.style.display = 'none';
+                }
+            });
+            
+            // Hide tooltip on scroll (to prevent it from floating at wrong position)
+            window.addEventListener('scroll', () => {
+                tooltip.style.display = 'none';
+                // If it was locked, reset the state since the context has changed
+                if (isTooltipLocked) {
+                    resetTooltip();
+                }
+            }, { passive: true });
+            
+        }
+        
+        // Setup close button and Set CoR button (only once, not per container)
+        document.addEventListener('DOMContentLoaded', function() {
+            const tooltipClose = document.getElementById('tooltip-close');
+            const tooltipBtn = document.getElementById('tooltip-set-cor');
+            
+            // Close button handler
+            if (tooltipClose) {
+                tooltipClose.onclick = function(event) {
+                    event.stopPropagation();
+                    resetTooltip();
+                    console.log('Tooltip closed.');
+                };
+            }
+            
+            // Click on "Set as CoR" button
+            if (tooltipBtn) {
+                tooltipBtn.onclick = function(event) {
+                    event.stopPropagation();
+                    
+                    if (selectedPoint) {
+                        console.log(`Setting CoR to: [${selectedPoint[0].toFixed(4)}, ${selectedPoint[1].toFixed(4)}, ${selectedPoint[2].toFixed(4)}]`);
+                        
+                        // Update the CENTER OF ROTATION (this is the ground truth!)
+                        centerOfRotation = [...selectedPoint];
+                        
+                        // Update input fields
+                        document.getElementById('cor-x').value = selectedPoint[0].toFixed(4);
+                        document.getElementById('cor-y').value = selectedPoint[1].toFixed(4);
+                        document.getElementById('cor-z').value = selectedPoint[2].toFixed(4);
+                        
+                        // Update markers - FORCE UPDATE
+                        if (markers.orig && markers.orig.cor) {
+                            markers.orig.cor.position.set(selectedPoint[0], selectedPoint[1], selectedPoint[2]);
+                            console.log('Updated orig CoR marker to:', markers.orig.cor.position);
+                        }
+                        if (markers.trans && markers.trans.cor) {
+                            markers.trans.cor.position.set(selectedPoint[0], selectedPoint[1], selectedPoint[2]);
+                            console.log('Updated trans CoR marker to:', markers.trans.cor.position);
+                        }
+                        
+                        // IMPORTANT: Reset recorded rotations with the NEW CoR as ground truth
+                        recordedRotations = [{
+                            angles: [0, 0, 0],
+                            points: JSON.parse(JSON.stringify(originalBunnyPoints))
+                        }];
+                        
+                        // Reset playback slider
+                        const playbackSlider = document.getElementById('playback-slider');
+                        if (playbackSlider) {
+                            playbackSlider.max = 0;
+                            playbackSlider.value = 0;
+                            document.getElementById('playback-value').textContent = '1 / 1';
+                        }
+                        
+                        // Clear record status
+                        const recordStatus = document.getElementById('record-status');
+                        if (recordStatus) {
+                            recordStatus.textContent = '';
+                        }
+                        
+                        // Reset sliders to 0
+                        const rotXSlider = document.getElementById('rotX');
+                        const rotYSlider = document.getElementById('rotY');
+                        const rotZSlider = document.getElementById('rotZ');
+                        if (rotXSlider) rotXSlider.value = 0;
+                        if (rotYSlider) rotYSlider.value = 0;
+                        if (rotZSlider) rotZSlider.value = 0;
+                        document.getElementById('rotX-value').textContent = '0.00';
+                        document.getElementById('rotY-value').textContent = '0.00';
+                        document.getElementById('rotZ-value').textContent = '0.00';
+                        
+                        // Reset the transformed bunny to original position
+                        if (bunnyTrans) {
+                            updatePointCloud(bunnyTrans, originalBunnyPoints);
+                        }
+                        if (markers.trans && markers.trans.com) {
+                            markers.trans.com.position.set(centerOfMass[0], centerOfMass[1], centerOfMass[2]);
+                        }
+                        
+                        // Remove estimated CoR marker
+                        if (sceneTrans) {
+                            removeMarkerByName(sceneTrans, 'Estimated-COR');
+                        }
+                        
+                        // Reset tooltip
+                        resetTooltip();
+                        
+                        console.log(`✅ CoR set to point: [${selectedPoint[0].toFixed(4)}, ${selectedPoint[1].toFixed(4)}, ${selectedPoint[2].toFixed(4)}]`);
+                        console.log('📝 Recorded rotations reset. This is your new ground truth CoR.');
+                    }
+                };
+            }
+            
+            // Click outside to unlock
+            document.addEventListener('click', (event) => {
+                if (isTooltipLocked && 
+                    !event.target.closest('#point-tooltip') && 
+                    !event.target.closest('#bunny-container-trans')) {
+                    resetTooltip();
+                    console.log('Clicked outside - tooltip reset.');
+                }
+            });
+            
+            // Collapsible sections functionality
+            const sectionHeaders = document.querySelectorAll('.section-header');
+            sectionHeaders.forEach(header => {
+                header.addEventListener('click', function() {
+                    const content = this.nextElementSibling;
+                    const icon = this.querySelector('.collapse-icon');
+                    
+                    if (content && icon) {
+                        content.classList.toggle('collapsed');
+                        icon.classList.toggle('collapsed');
+                    }
+                });
+            });
+        });
+        
+        function setupControls() {
+            // Visibility checkboxes
+            const showOriginalCheckbox = document.getElementById('show-original');
+            const showTransformedCheckbox = document.getElementById('show-transformed');
+            
+            if (showOriginalCheckbox) {
+                showOriginalCheckbox.onchange = function() {
+                    if (bunnyOrig) {
+                        bunnyOrig.visible = this.checked;
+                    }
+                };
+            }
+            
+            if (showTransformedCheckbox) {
+                showTransformedCheckbox.onchange = function() {
+                    if (bunnyTrans) {
+                        bunnyTrans.visible = this.checked;
+                    }
+                };
+            }
+            
+            const rotXSlider = document.getElementById('rotX');
+            const rotYSlider = document.getElementById('rotY');
+            const rotZSlider = document.getElementById('rotZ');
+            const rotXValue = document.getElementById('rotX-value');
+            const rotYValue = document.getElementById('rotY-value');
+            const rotZValue = document.getElementById('rotZ-value');
+            
+            // Real-time preview as you drag sliders
+            function updatePreview() {
+                const angleX = parseFloat(rotXSlider.value);
+                const angleY = parseFloat(rotYSlider.value);
+                const angleZ = parseFloat(rotZSlider.value);
+                
+                const rotatedPoints = applyRotation(originalBunnyPoints, angleX, angleY, angleZ, centerOfRotation);
+                updatePointCloud(bunnyTrans, rotatedPoints);
+                
+                const newCom = computeCenterOfMass(rotatedPoints);
+                markers.trans.com.position.set(newCom[0], newCom[1], newCom[2]);
+            }
+            
+            rotXSlider.oninput = () => {
+                rotXValue.textContent = parseFloat(rotXSlider.value).toFixed(2);
+                updatePreview();
+            };
+            rotYSlider.oninput = () => {
+                rotYValue.textContent = parseFloat(rotYSlider.value).toFixed(2);
+                updatePreview();
+            };
+            rotZSlider.oninput = () => {
+                rotZValue.textContent = parseFloat(rotZSlider.value).toFixed(2);
+                updatePreview();
+            };
+            
+            // Record button now both applies AND records
+            document.getElementById('record-rotation-btn').onclick = function() {
+                const angleX = parseFloat(rotXSlider.value);
+                const angleY = parseFloat(rotYSlider.value);
+                const angleZ = parseFloat(rotZSlider.value);
+                
+                // Apply the rotation to visualize
+                const rotatedPoints = applyRotation(originalBunnyPoints, angleX, angleY, angleZ, centerOfRotation);
+                updatePointCloud(bunnyTrans, rotatedPoints);
+                
+                // Update center of mass marker
+                const newCom = computeCenterOfMass(rotatedPoints);
+                markers.trans.com.position.set(newCom[0], newCom[1], newCom[2]);
+                
+                // Record this pose
+                recordedRotations.push({
+                    angles: [angleX, angleY, angleZ],
+                    points: JSON.parse(JSON.stringify(rotatedPoints))
+                });
+                
+                // Update playback slider
+                const playbackSlider = document.getElementById('playback-slider');
+                playbackSlider.max = recordedRotations.length - 1;
+                playbackSlider.value = recordedRotations.length - 1;
+                document.getElementById('playback-value').textContent = `${recordedRotations.length} / ${recordedRotations.length}`;
+                
+                // Update record status (green success message)
+                const recordStatus = document.getElementById('record-status');
+                if (recordStatus) {
+                    recordStatus.textContent = `✓ Recorded ${recordedRotations.length} pose${recordedRotations.length > 1 ? 's' : ''}`;
+                    recordStatus.style.color = '#2ecc71';
+                    // Flash animation
+                    recordStatus.style.fontWeight = 'bold';
+                    setTimeout(() => {
+                        if (recordStatus) recordStatus.style.fontWeight = 'normal';
+                    }, 1000);
+                }
+                
+                const status = document.getElementById('estimation-status');
+                status.textContent = `Recorded ${recordedRotations.length} poses. ${recordedRotations.length >= 2 ? 'Ready to estimate!' : 'Record more poses.'}`;
+                status.style.color = recordedRotations.length >= 2 ? '#2ecc71' : '#666';
+                
+                console.log(`Recorded pose ${recordedRotations.length}: [${angleX.toFixed(2)}, ${angleY.toFixed(2)}, ${angleZ.toFixed(2)}]`);
+            };
+            
+            document.getElementById('reset-rotation-btn').onclick = function() {
+                rotXSlider.value = 0;
+                rotYSlider.value = 0;
+                rotZSlider.value = 0;
+                rotXValue.textContent = '0.00';
+                rotYValue.textContent = '0.00';
+                rotZValue.textContent = '0.00';
+                
+                updatePointCloud(bunnyTrans, originalBunnyPoints);
+                markers.trans.com.position.set(centerOfMass[0], centerOfMass[1], centerOfMass[2]);
+                
+                recordedRotations = [{
+                    angles: [0, 0, 0],
+                    points: JSON.parse(JSON.stringify(originalBunnyPoints))
+                }];
+                
+                // Reset playback slider
+                const playbackSlider = document.getElementById('playback-slider');
+                playbackSlider.max = 0;
+                playbackSlider.value = 0;
+                document.getElementById('playback-value').textContent = '0 / 1';
+                
+                // Clear record status
+                const recordStatus = document.getElementById('record-status');
+                if (recordStatus) {
+                    recordStatus.textContent = '';
+                }
+                
+                removeMarkerByName(sceneTrans, 'Estimated-COR');
+                
+                document.getElementById('estimation-status').textContent = 'Reset complete. Record poses to estimate.';
+            };
+            
+            // Set Center of Rotation (manual input)
+            document.getElementById('set-cor-btn').onclick = function() {
+                const newX = parseFloat(document.getElementById('cor-x').value);
+                const newY = parseFloat(document.getElementById('cor-y').value);
+                const newZ = parseFloat(document.getElementById('cor-z').value);
+                
+                if (isNaN(newX) || isNaN(newY) || isNaN(newZ)) {
+                    alert('Please enter valid numbers for CoR coordinates');
+                    return;
+                }
+                
+                // Update the CENTER OF ROTATION (this is the ground truth!)
+                centerOfRotation = [newX, newY, newZ];
+                
+                // Update markers
+                markers.orig.cor.position.set(newX, newY, newZ);
+                markers.trans.cor.position.set(newX, newY, newZ);
+                
+                // IMPORTANT: Reset recorded rotations with the NEW CoR as ground truth
+                recordedRotations = [{
+                    angles: [0, 0, 0],
+                    points: JSON.parse(JSON.stringify(originalBunnyPoints))
+                }];
+                
+                // Reset playback slider
+                const playbackSlider = document.getElementById('playback-slider');
+                playbackSlider.max = 0;
+                playbackSlider.value = 0;
+                document.getElementById('playback-value').textContent = '1 / 1';
+                
+                // Clear record status
+                const recordStatus = document.getElementById('record-status');
+                if (recordStatus) {
+                    recordStatus.textContent = '';
+                }
+                
+                // Reset sliders to 0
+                rotXSlider.value = 0;
+                rotYSlider.value = 0;
+                rotZSlider.value = 0;
+                rotXValue.textContent = '0.00';
+                rotYValue.textContent = '0.00';
+                rotZValue.textContent = '0.00';
+                
+                // Reset the transformed bunny to original position
+                updatePointCloud(bunnyTrans, originalBunnyPoints);
+                markers.trans.com.position.set(centerOfMass[0], centerOfMass[1], centerOfMass[2]);
+                
+                // Remove estimated CoR marker
+                removeMarkerByName(sceneTrans, 'Estimated-COR');
+                
+                console.log(`✅ CoR set to: [${newX.toFixed(4)}, ${newY.toFixed(4)}, ${newZ.toFixed(4)}]`);
+                console.log('📝 Recorded rotations reset. This is your new ground truth CoR.');
+            };
+            
+            // Reset CoR to Center of Mass
+            document.getElementById('reset-cor-btn').onclick = function() {
+                centerOfRotation = [...centerOfMass];
+                
+                document.getElementById('cor-x').value = centerOfMass[0].toFixed(4);
+                document.getElementById('cor-y').value = centerOfMass[1].toFixed(4);
+                document.getElementById('cor-z').value = centerOfMass[2].toFixed(4);
+                
+                markers.orig.cor.position.set(centerOfMass[0], centerOfMass[1], centerOfMass[2]);
+                markers.trans.cor.position.set(centerOfMass[0], centerOfMass[1], centerOfMass[2]);
+                
+                // Reset recorded rotations
+                recordedRotations = [{
+                    angles: [0, 0, 0],
+                    points: JSON.parse(JSON.stringify(originalBunnyPoints))
+                }];
+                
+                // Reset playback slider
+                const playbackSlider = document.getElementById('playback-slider');
+                playbackSlider.max = 0;
+                playbackSlider.value = 0;
+                document.getElementById('playback-value').textContent = '1 / 1';
+                
+                // Clear record status
+                const recordStatus = document.getElementById('record-status');
+                if (recordStatus) {
+                    recordStatus.textContent = '';
+                }
+                
+                // Reset sliders
+                rotXSlider.value = 0;
+                rotYSlider.value = 0;
+                rotZSlider.value = 0;
+                rotXValue.textContent = '0.00';
+                rotYValue.textContent = '0.00';
+                rotZValue.textContent = '0.00';
+                
+                // Reset transformation
+                updatePointCloud(bunnyTrans, originalBunnyPoints);
+                markers.trans.com.position.set(centerOfMass[0], centerOfMass[1], centerOfMass[2]);
+                
+                // Remove estimated CoR marker
+                removeMarkerByName(sceneTrans, 'Estimated-COR');
+                
+                console.log('✅ Center of Rotation reset to Center of Mass');
+                console.log('📝 Recorded rotations reset.');
+            };
+            
+            // Playback slider
+            const playbackSlider = document.getElementById('playback-slider');
+            const playbackValue = document.getElementById('playback-value');
+            
+            playbackSlider.oninput = function() {
+                const idx = parseInt(playbackSlider.value);
+                playbackValue.textContent = `${idx + 1} / ${recordedRotations.length}`;
+                
+                if (idx >= 0 && idx < recordedRotations.length) {
+                    const pose = recordedRotations[idx];
+                    
+                    // Update sliders
+                    rotXSlider.value = pose.angles[0];
+                    rotYSlider.value = pose.angles[1];
+                    rotZSlider.value = pose.angles[2];
+                    rotXValue.textContent = pose.angles[0].toFixed(2);
+                    rotYValue.textContent = pose.angles[1].toFixed(2);
+                    rotZValue.textContent = pose.angles[2].toFixed(2);
+                    
+                    // Update visualization
+                    updatePointCloud(bunnyTrans, pose.points);
+                    const com = computeCenterOfMass(pose.points);
+                    markers.trans.com.position.set(com[0], com[1], com[2]);
+                }
+            };
+            
+            document.getElementById('estimate-cor-btn').onclick = function() {
+                const estimated = estimateCenterOfRotation(false);
+                if (estimated) {
+                    removeMarkerByName(sceneTrans, 'Estimated-COR');
+                    addMarker(sceneTrans, estimated, 0xf39c12, 0.01, 'Estimated-COR');
+                    
+                    const error = Math.sqrt(
+                        Math.pow(estimated[0] - centerOfRotation[0], 2) +
+                        Math.pow(estimated[1] - centerOfRotation[1], 2) +
+                        Math.pow(estimated[2] - centerOfRotation[2], 2)
+                    );
+                    
+                    document.getElementById('estimation-status').innerHTML = 
+                        `<strong>Estimated CoR (orange):</strong> [${estimated.map(v => v.toFixed(4)).join(', ')}]<br>` +
+                        `<strong>Ground Truth CoR (green):</strong> [${centerOfRotation.map(v => v.toFixed(4)).join(', ')}]<br>` +
+                        `<strong>Error:</strong> ${(error * 1000).toFixed(2)} mm`;
+                    document.getElementById('estimation-status').style.color = '#2ecc71';
+                } else {
+                    document.getElementById('estimation-status').textContent = 'Need at least 2 poses to estimate.';
+                    document.getElementById('estimation-status').style.color = '#e74c3c';
+                }
+            };
+        }
+        
         window.addEventListener('DOMContentLoaded', init);
     </script>
     
