@@ -88,8 +88,16 @@ h1 {
 /* Profile image and description. */
 
 #intro {
-  padding-top: 6em;
+  padding-top: 2em;
   display: flex;
+}
+
+#intro-text p {
+  margin: 0 0 0.6em 0;
+}
+
+#intro-text > div:first-of-type {
+  margin-bottom: 0.6em;
 }
 
 #intro-text {
