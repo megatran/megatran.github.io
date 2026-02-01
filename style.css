@@ -536,32 +536,126 @@ body.loading {
 }
 
 /**************************************************/
-/* Small screen Content adjustment */
+/* Medium screen Content adjustment (tablets, resized windows) */
 
-
-@media screen and (max-width: 600px) {
+@media screen and (max-width: 900px) {
   #main {
-    width: 90%; /* Use percentage instead of auto */
+    width: 90%;
     margin: 0 auto;
     padding: 10px;
   }
 
   #intro {
-    flex-direction: column;
     padding-top: 2em;
+    gap: 0.5em;
   }
 
   #intro-text {
-    width: 100%; /* Full width on mobile */
-    order: 2;
-    margin: 1em 0;
+    width: 100%;
+  }
+
+  #intro-text p {
+    margin-bottom: 0.3em;
+  }
+
+  #intro-text br {
+    display: none;
   }
 
   #intro-image {
+    width: 10em;
+    margin: 1em 0 0 1em;
+    flex-shrink: 0;
+  }
+
+  #intro-image img,
+  .slideshow-container,
+  .mySlides img {
+    width: 10em;
+    height: 10em;
+  }
+
+  .dots-container {
+    width: 10em;
+  }
+
+  .project-description {
+    width: 75%;
+  }
+
+  /* Email on its own line */
+  .email-line {
+    display: block;
+    margin-top: 0.5em;
+  }
+}
+
+/**************************************************/
+/* Small screen Content adjustment */
+
+
+@media screen and (max-width: 600px) {
+  #main {
+    width: 92%;
+    margin: 0 auto;
+    padding: 10px;
+  }
+
+  #intro {
+    display: block;
+    position: relative;
+  }
+
+  #intro-text {
     width: 100%;
-    max-width: 12em; /* Keep maximum size */
-    margin: 2em auto;
-    order: 1;
+  }
+
+  #intro-text h1 {
+    padding-right: 7em;
+  }
+
+  #intro-text > div:first-of-type > p:first-child {
+    padding-right: 7em;
+  }
+
+  #intro-text p {
+    margin-bottom: 0.5em;
+  }
+
+  #intro-text br {
+    display: none;
+  }
+
+  #intro-image {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 6em;
+    margin: 0;
+  }
+
+  #intro-image img,
+  .slideshow-container,
+  .mySlides img {
+    width: 6em !important;
+    height: 6em !important;
+  }
+
+  .dots-container {
+    width: 6em;
+    padding: 2px 0;
+  }
+
+  .dot {
+    height: 4px;
+    width: 4px;
+    margin: 0 2px;
+  }
+
+  h1 {
+    font-size: 1.6em;
+    line-height: 1.2em;
+    margin-bottom: 0.3em;
   }
 
   /* Fix for project items */
@@ -626,6 +720,23 @@ body.loading {
   .grid {
     width: 100%;
     padding-bottom: 2em; /* Reduce padding on mobile */
+  }
+
+  /* Reduce filter button gaps */
+  .button-group {
+    margin-bottom: 0.5em;
+  }
+
+  .button {
+    font-size: 0.95em;
+    padding: 0.3em 0.5em;
+    margin: 0.1em 0;
+  }
+
+  /* Email on its own line */
+  .email-line {
+    display: block;
+    margin-top: 0.5em;
   }
 }
 
