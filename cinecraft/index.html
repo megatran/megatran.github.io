@@ -92,9 +92,19 @@
             border: 1px solid #D97000;
         }
 
+        .teaser-image-wrapper {
+            max-height: calc(100vh - 320px);
+            margin-bottom: 15px;
+        }
+
         .teaser-image {
             width: 100%;
-            margin-bottom: 15px;
+            height: auto;
+            max-height: calc(100vh - 320px);
+            object-fit: contain;
+            object-position: top;
+            display: block;
+            vertical-align: top;
         }
 
         .teaser-caption {
@@ -173,14 +183,17 @@
             }
             
             .buttons {
-                flex-direction: column;
-                align-items: center;
+                flex-direction: row;
+                flex-wrap: nowrap;
+                gap: 6px;
             }
             
             .btn {
                 margin: 5px 0;
-                width: 200px;
+                width: fit-content;
                 text-align: center;
+                padding: 6px 10px;
+                font-size: 0.8rem;
             }
         }
     </style>
@@ -205,7 +218,9 @@
     </div>
 
     <div class="teaser">
-        <img src="images/CineCraftTeaser_v7.jpg" alt="CineCraft Teaser" class="teaser-image">
+        <div class="teaser-image-wrapper">
+            <img src="images/CineCraftTeaser_v7.jpg" alt="CineCraft Teaser" class="teaser-image">
+        </div>
         <p class="teaser-caption">
             Our tool, <strong>CineCraft</strong>, uses animated storyboards—<em>shot plans</em> <strong>(Top)</strong>—to unify three stages of mobile filmmaking. Our shot planning interface <strong>(Left)</strong> lets users design and previsualize shots by keyframing foreground/background layers and camera motion. During capture <strong>(Center)</strong>, we overlay the shot plan on the live view, track subjects to guide framing, and automate zoom and focus. During post-processing <strong>(Right)</strong>, we use the planned storyboard to group captured footage under each shot panel, let users select the best take for each shot, and string them into a rough cut—all within a single app.
         </p>
