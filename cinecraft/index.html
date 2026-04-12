@@ -38,7 +38,7 @@
             margin-bottom: 15px;
             font-weight: bold;
         }
-        
+
         h2 {
             font-size: calc(0.9rem + 0.5vw);
             color: #666;
@@ -173,21 +173,21 @@
             body {
                 padding: 15px;
             }
-            
+
             h1 {
                 font-size: 1.5rem;
             }
-            
+
             h2.conference-name {
                 font-size: 1.0rem;
             }
-            
+
             .buttons {
                 flex-direction: row;
                 flex-wrap: nowrap;
                 gap: 6px;
             }
-            
+
             .btn {
                 margin: 5px 0;
                 width: fit-content;
@@ -240,6 +240,784 @@
         </div>
     </div>
 
+    <!-- ============================================ -->
+    <!-- Interactive Two-Plane Scene Model (Three.js) -->
+    <!-- ============================================ -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+
+    <div id="two-plane-demo">
+        <h2 style="font-size:calc(1rem + 0.3vw); color:#333;">Interactive: Two-Plane Shot Planning Model</h2>
+        <p style="font-size:calc(0.8rem + 0.1vw); color:#666; margin-bottom:15px;">
+            Our shot planning interface represents scenes as parallel foreground and background layers suspended in 3D space. Users design and previsualize shots by manipulating viewport rectangles on each layer. Camera position, field of view, zoom, and focus are then <em>derived</em> from these viewports. The <strong>Camera Feed</strong> panel shows the resulting view that the user would see through the viewfinder during filming. In the app, users can replace these abstract layers with real photos from location scouting. During capture, the shot plan drives augmented reality guidance with live object tracking and segmentation, helping the camera operator match the planned framing while the app automatically adjusts zoom and focus in real time (see our video above). Try the presets below to see how different viewport combinations produce distinct cinematic effects.
+        </p>
+
+        <!-- Workspace container -->
+        <div id="sim-workspace">
+            <div id="sim-main-area">
+                <!-- Overlay controls -->
+                <div id="sim-overlay">
+                    <div class="sim-row">
+                        <button class="sim-ctrl-btn" onclick="simToggleTheme()" id="sim-theme-btn">Dark Mode: OFF</button>
+                        <button class="sim-ctrl-btn" id="sim-record-btn" onclick="simToggleAutoSave()">Auto-Save: OFF</button>
+                        <button class="sim-ctrl-btn" onclick="simResetState()">Reset Pos</button>
+                        <div class="sim-sep"></div>
+                        <span class="sim-label">Views</span>
+                        <button id="sim-cam-toggle" class="sim-ctrl-btn sim-active" onclick="simToggleView('camera')">&#10003; Camera</button>
+                        <button id="sim-fg-toggle" class="sim-ctrl-btn sim-active" onclick="simToggleView('foreground')">&#10003; Foreground</button>
+                        <button id="sim-bg-toggle" class="sim-ctrl-btn sim-active" onclick="simToggleView('background')">&#10003; Background</button>
+                    </div>
+                    <div class="sim-row">
+                        <span class="sim-label">Sequences</span>
+                        <button class="sim-action-btn sim-action-secondary" onclick="simStartAnim('dolly-zoom')">Dolly Zoom</button>
+                        <button class="sim-action-btn sim-action-secondary" onclick="simStartAnim('reverse-dz')">Reverse Dolly Zoom</button>
+                        <button class="sim-action-btn sim-action-secondary" onclick="simStartAnim('uniform-zoom')">Optical Zoom</button>
+                        <button class="sim-action-btn" onclick="simStartAnim('move-fg')">Pan</button>
+                        <button class="sim-action-btn" onclick="simStartAnim('tilt-up')">Tilt Up</button>
+                        <button class="sim-action-btn" onclick="simStartAnim('move-both')">Truck Right</button>
+                        <button class="sim-action-btn" onclick="simStartAnim('boom-up')">Boom Up</button>
+                        <button class="sim-action-btn" onclick="simStartAnim('dolly-in')">Dolly In</button>
+                        <button class="sim-action-btn" onclick="simStartAnim('dolly-out')">Dolly Out</button>
+                    </div>
+                </div>
+                <div id="sim-canvas-mount"></div>
+            </div>
+            <!-- Sidebar -->
+            <div id="sim-sidebar" class="sim-sidebar-active">
+                <div class="sim-panel sim-panel-visible" id="sim-panel-camera">
+                    <div class="sim-panel-header">Camera Feed</div>
+                    <div class="sim-panel-content"><canvas id="sim-camera-canvas"></canvas></div>
+                </div>
+                <div class="sim-panel sim-panel-visible" id="sim-panel-foreground">
+                    <div class="sim-panel-header">Foreground Plane</div>
+                    <div class="sim-panel-content"><canvas id="sim-fg-panel-canvas" width="1920" height="1080"></canvas></div>
+                </div>
+                <div class="sim-panel sim-panel-visible" id="sim-panel-background">
+                    <div class="sim-panel-header">Background Plane</div>
+                    <div class="sim-panel-content"><canvas id="sim-bg-panel-canvas" width="1920" height="1080"></canvas></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="demo-hint" style="text-align:left; max-width:820px; margin:10px auto 5px auto; columns:2; column-gap:24px; line-height:1.7;">
+            <strong>Dolly Zoom:</strong> background viewport expands, foreground stays fixed. Also known as the <a href="https://www.youtube.com/shorts/o1FAqA--36Y" target="_blank" rel="noopener noreferrer" style="color:#D97000; text-decoration:none;">Hitchcock/Vertigo effect</a>.<br>
+            <strong>Reverse Dolly Zoom:</strong> background viewport shrinks, foreground stays fixed.<br>
+            <strong>Optical Zoom:</strong> both viewports scale at the same rate. No parallax.<br>
+            <strong>Pan:</strong> foreground viewport shifts horizontally. Camera rotates.<br>
+            <strong>Tilt Up:</strong> foreground viewport shifts vertically. Camera tilts.<br>
+            <strong>Truck Right:</strong> both viewports shift horizontally together. Camera translates.<br>
+            <strong>Boom Up:</strong> both viewports shift vertically together. Camera rises.<br>
+            <strong>Dolly In:</strong> both viewports shrink, foreground more than background. Camera moves forward.<br>
+            <strong>Dolly Out:</strong> both viewports grow, foreground more than background. Camera moves backward.
+        </div>
+    </div>
+
+    <style>
+        /* --- SIM THEME VARIABLES --- */
+        #two-plane-demo {
+            margin: 30px 0 40px 0;
+            padding: 25px 0 0 0;
+            border-top: 1px solid #e5e5e5;
+        }
+        #sim-workspace {
+            --sim-bg: #e8ecf0;
+            --sim-text: #334155;
+            --sim-divider: #cbd5e1;
+            --sim-btn-bg: rgba(255, 255, 255, 0.9);
+            --sim-btn-text: #475569;
+            --sim-btn-border: #cbd5e1;
+            --sim-btn-hover: #f1f5f9;
+            --sim-accent-orange: #D97000;
+            --sim-accent-blue: #2563eb;
+            --sim-sidebar-bg: #f1f5f9;
+            --sim-panel-bg: #e2e8f0;
+            --sim-overlay-bg: rgba(255, 255, 255, 0.6);
+        }
+        #sim-workspace.sim-dark {
+            --sim-bg: #111827;
+            --sim-text: #f1f5f9;
+            --sim-divider: #374151;
+            --sim-btn-bg: rgba(31, 41, 55, 0.9);
+            --sim-btn-text: #ffffff;
+            --sim-btn-border: #4b5563;
+            --sim-btn-hover: #374151;
+            --sim-accent-orange: #F1A83B;
+            --sim-accent-blue: #3b82f6;
+            --sim-sidebar-bg: #0f172a;
+            --sim-panel-bg: #000000;
+            --sim-overlay-bg: rgba(0, 0, 0, 0.3);
+        }
+        #sim-workspace {
+            display: flex;
+            width: 100%;
+            height: 600px;
+            border-radius: 10px;
+            overflow: hidden;
+            background: var(--sim-bg);
+            transition: background-color 0.3s;
+            border: 1px solid var(--sim-divider);
+        }
+        #sim-main-area {
+            flex: 1;
+            position: relative;
+            min-width: 0;
+            height: 100%;
+            background: var(--sim-bg);
+        }
+        #sim-canvas-mount {
+            width: 100%;
+            height: 100%;
+        }
+        #sim-canvas-mount canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+            outline: none;
+        }
+
+        /* Overlay controls */
+        #sim-overlay {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            pointer-events: none;
+            max-width: calc(100% - 20px);
+        }
+        #sim-overlay > * { pointer-events: auto; }
+        .sim-row {
+            display: flex;
+            gap: 5px;
+            background: var(--sim-overlay-bg);
+            backdrop-filter: blur(12px);
+            padding: 5px 8px;
+            border-radius: 8px;
+            border: 1px solid var(--sim-divider);
+            align-items: center;
+            flex-wrap: wrap;
+            width: fit-content;
+        }
+        .sim-ctrl-btn, .sim-action-btn {
+            background: var(--sim-btn-bg);
+            color: var(--sim-btn-text);
+            border: 1px solid var(--sim-btn-border);
+            padding: 4px 10px;
+            border-radius: 5px;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.15s;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-family: inherit;
+        }
+        .sim-ctrl-btn:hover { background: var(--sim-btn-hover); }
+        .sim-ctrl-btn.sim-active {
+            background: var(--sim-accent-blue);
+            color: white;
+            border-color: var(--sim-accent-blue);
+        }
+        .sim-action-btn {
+            background: var(--sim-accent-orange);
+            color: white;
+            border: none;
+        }
+        .sim-action-btn:hover { filter: brightness(1.1); }
+        .sim-action-btn.sim-action-secondary {
+            background: var(--sim-accent-blue);
+        }
+        .sim-label {
+            font-size: 10px;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 800;
+            margin: 0 2px;
+        }
+        .sim-sep {
+            width: 1px;
+            height: 14px;
+            background: var(--sim-divider);
+            margin: 0 3px;
+        }
+        #sim-record-btn.sim-recording {
+            background: #ef4444;
+            color: white;
+            border-color: #ef4444;
+            animation: sim-pulse-red 2s infinite;
+        }
+        @keyframes sim-pulse-red {
+            0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.5); }
+            70% { box-shadow: 0 0 0 6px rgba(239, 68, 68, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+        }
+        .sim-fade-out { opacity: 0; pointer-events: none; }
+
+        /* Sidebar */
+        #sim-sidebar {
+            display: flex;
+            flex-direction: column;
+            width: 0;
+            background: var(--sim-sidebar-bg);
+            border-left: 1px solid var(--sim-divider);
+            transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow: hidden;
+            height: 100%;
+        }
+        #sim-sidebar.sim-sidebar-active {
+            width: 260px;
+            flex-shrink: 0;
+        }
+        .sim-panel {
+            display: none;
+            flex-direction: column;
+            flex: 1;
+            border-bottom: 1px solid var(--sim-divider);
+            padding: 8px;
+            min-height: 0;
+        }
+        .sim-panel:last-child { border-bottom: none; }
+        .sim-panel.sim-panel-visible { display: flex; }
+        .sim-panel-header {
+            font-size: 9px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #94a3b8;
+            margin-bottom: 4px;
+        }
+        .sim-panel-content {
+            flex: 1;
+            background: var(--sim-panel-bg);
+            border-radius: 5px;
+            border: 1px solid var(--sim-divider);
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            min-height: 0;
+        }
+        .sim-panel-content canvas {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .demo-hint {
+            font-size: 12px;
+            color: #888;
+            text-align: center;
+            line-height: 1.5;
+            margin: 10px 0 5px 0;
+        }
+        .demo-hint strong { color: #666; }
+
+        @media (max-width: 600px) {
+            #sim-workspace { height: 450px; flex-direction: column; }
+            #sim-sidebar.sim-sidebar-active { width: 100%; height: 180px; flex-shrink: 0; flex-direction: row; }
+            .sim-panel { border-bottom: none; border-right: 1px solid var(--sim-divider); }
+            .sim-panel:last-child { border-right: none; }
+            .sim-row { flex-wrap: wrap; }
+            .sim-ctrl-btn, .sim-action-btn { padding: 3px 7px; font-size: 10px; }
+            #sim-overlay { max-width: calc(100% - 16px); }
+        }
+    </style>
+
+    <script>
+    (function() {
+        'use strict';
+
+        // --- THEME ---
+        var SIM_THEMES = {
+            light: { sceneBg: 0xe8ecf0, camColor: 0x16a34a, gridColor1: 0xcbd5e1, gridColor2: 0xe2e8f0, fgGlass: 0xffffff },
+            dark:  { sceneBg: 0x111827, camColor: 0x4ade80, gridColor1: 0x374151, gridColor2: 0x1f2937, fgGlass: 0x334155 }
+        };
+        var simIsDark = false;
+        var simTheme = SIM_THEMES.light;
+        var SIM_FG_COLOR = '#D97000';
+        var SIM_BG_COLOR = '#2563eb';
+
+        // --- SVG TEXTURES ---
+        var fgSvgStr = '<svg xmlns="http://www.w3.org/2000/svg" width="2048" height="1024" viewBox="-30 -8 160 80">' +
+            '<g><path d="m67.469 61.734c1.7734 0 3.2617-1.3828 3.3672-3.1758 0.16797-2.9219 0.24609-5.6055 0.25-8.0781-0.019532-12.727-2.0508-19.77-4.8203-24.004-1.3867-2.1016-3.0039-3.4492-4.5039-4.1953-1.418-0.71484-2.6641-0.88281-3.4258-0.89844-0.0625-0.003906-0.125-0.007812-0.1875-0.007812h-16.293c-0.066407 0-0.12891 0.007812-0.19141 0.007812-0.76562 0.015626-2.0117 0.18359-3.4258 0.89844-2.2695 1.125-4.7109 3.5859-6.4258 7.9414-1.7305 4.3789-2.8906 10.707-2.8984 20.262 0 2.4688 0.082032 5.1562 0.25391 8.0781 0.10547 1.793 1.5898 3.1758 3.3633 3.1758 0.066406 0 0.13281-0.003906 0.20312-0.007812 1.8594-0.10938 3.2773-1.707 3.1719-3.5664-0.16797-2.8008-0.24609-5.3555-0.24609-7.6797-0.011718-10.211 1.4766-15.949 2.9375-18.941v63.246c0 2.8789 2.3359 5.2109 5.2109 5.2109 2.8789 0 5.2148-2.332 5.2148-5.2109v-38.059h1.9531v38.059c0 2.8789 2.3359 5.2109 5.2109 5.2109 2.8789 0 5.2148-2.332 5.2148-5.2109v-63.227c0.25 0.51172 0.5 1.1016 0.75 1.7852 1.1875 3.293 2.1875 8.6992 2.1836 17.133 0 2.3242-0.074219 4.8789-0.23828 7.6836-0.10938 1.8594 1.3125 3.457 3.1719 3.5625 0.070313 0.007813 0.13672 0.007813 0.19922 0.007813z" fill="#D97000"/>' +
+            '<path d="m59.488 9.4883c0 5.2383-4.25 9.4844-9.4883 9.4844s-9.4844-4.2461-9.4844-9.4844c0-5.2422 4.2461-9.4883 9.4844-9.4883s9.4883 4.2461 9.4883 9.4883" fill="#D97000"/></g></svg>';
+
+        var bgSvgStr = '<svg xmlns="http://www.w3.org/2000/svg" width="2048" height="1024" viewBox="-50 0 200 100">' +
+            '<rect x="-50" y="0" width="200" height="100" fill="#e0e5ee"/>' +
+            '<path d="m63.883 80.078h-21.742v4.9297h-1.2812v-4.9297h-21.742v4.9297h-1.2812v-4.9297h-3.8359v-9.9023h2.5586v8.6641h49.883v-8.6641h2.5586v9.9023h-3.8359v4.9297h-1.2812z" fill="#2563eb" fill-rule="evenodd"/>' +
+            '<path d="m18.375 74.516h13.637c0.64844 0 1.1758 0.64844 1.1758 1.1758v1.3516c0 0.64844-0.52734 1.1758-1.1758 1.1758h-13.637c-0.64844 0-1.1758-0.64844-1.1758-1.1758v-1.3516c0-0.64844 0.52734-1.1758 1.1758-1.1758z" fill="#2563eb" fill-rule="evenodd"/>' +
+            '<path d="m18.375 64h13.637c0.64844 0 1.1758 0.64844 1.1758 1.1758v7.5312c0 0.64844-0.52734 1.1758-1.1758 1.1758h-13.637c-0.64844 0-1.1758-0.64844-1.1758-1.1758v-7.5312c0-0.64844 0.52734-1.1758 1.1758-1.1758z" fill="#2563eb" fill-rule="evenodd"/>' +
+            '<path d="m34.684 74.516h13.637c0.64844 0 1.1758 0.64844 1.1758 1.1758v1.3516c0 0.64844-0.52734 1.1758-1.1758 1.1758h-13.637c-0.64844 0-1.1758-0.64844-1.1758-1.1758v-1.3516c0-0.64844 0.52734-1.1758 1.1758-1.1758z" fill="#2563eb" fill-rule="evenodd"/>' +
+            '<path d="m34.684 64h13.637c0.64844 0 1.1758 0.64844 1.1758 1.1758v7.5312c0 0.64844-0.52734 1.1758-1.1758 1.1758h-13.637c-0.64844 0-1.1758-0.64844-1.1758-1.1758v-7.5312c0-0.64844 0.52734-1.1758 1.1758-1.1758z" fill="#2563eb" fill-rule="evenodd"/>' +
+            '<path d="m50.992 74.516h13.637c0.64844 0 1.1758 0.64844 1.1758 1.1758v1.3516c0 0.64844-0.52734 1.1758-1.1758 1.1758h-13.637c-0.64844 0-1.1758-0.64844-1.1758-1.1758v-1.3516c0-0.64844 0.52734-1.1758 1.1758-1.1758z" fill="#2563eb" fill-rule="evenodd"/>' +
+            '<path d="m50.992 64h13.637c0.64844 0 1.1758 0.64844 1.1758 1.1758v7.5312c0 0.64844-0.52734 1.1758-1.1758 1.1758h-13.637c-0.64844 0-1.1758-0.64844-1.1758-1.1758v-7.5312c0-0.64844 0.52734-1.1758 1.1758-1.1758z" fill="#2563eb" fill-rule="evenodd"/>' +
+            '<path d="m5 17h20v38h-20zm0.75391 0.76953v5.7539h3.3984v-5.7539zm0 6.1406v5.7578h3.3984v-5.7578zm3.7734-6.1406v5.7539h3.3984v-5.7539zm0 6.1406v5.7578h3.3984v-5.7578zm3.7734-6.1406v5.7539h3.3984v-5.7539zm0 6.1406v5.7578h3.3984v-5.7578zm3.7734-6.1406v5.7539h3.3984v-5.7539zm0 6.1406v5.7578h3.3984v-5.7578zm3.7734-6.1406v5.7539h3.3984v-5.7539zm0 6.1406v5.7578h3.3984v-5.7578zm-15.094 6.1406v5.7578h3.3984v-5.7578zm3.7734 0v5.7578h3.3984v-5.7578zm3.7734 0v5.7578h3.3984v-5.7578zm3.7734 0v5.7578h3.3984v-5.7578zm3.7734 0v5.7578h3.3984v-5.7578zm-15.094 6.1406v5.7578h3.3984v-5.7578zm3.7734 0v5.7578h3.3984v-5.7578zm3.7734 0v5.7578h3.3984v-5.7578zm3.7734 0v5.7578h3.3984v-5.7578zm3.7734 0v5.7578h3.3984v-5.7578zm-15.094 6.1406v5.7578h3.3984v-5.7578zm0 6.1445v5.7539h3.3984v-5.7539zm3.7734-6.1445v5.7578h3.3984v-5.7578zm0 6.1445v5.7539h3.3984v-5.7539zm3.7734-6.1445v5.7578h3.3984v-5.7578zm0 6.1445v5.7539h3.3984v-5.7539zm3.7734-6.1445v5.7578h3.3984v-5.7578zm0 6.1445v5.7539h3.3984v-5.7539zm3.7734-6.1445v5.7578h3.3984v-5.7578zm0 6.1445v5.7539h3.3984v-5.7539z" fill="#2563eb" fill-rule="evenodd"/>' +
+            '<path d="m40 17h20v38h-20zm0.75391 0.76953v5.7539h3.3984v-5.7539zm0 6.1406v5.7578h3.3984v-5.7578zm3.7734-6.1406v5.7539h3.3984v-5.7539zm0 6.1406v5.7578h3.3984v-5.7578zm3.7734-6.1406v5.7539h3.3984v-5.7539zm0 6.1406v5.7578h3.3984v-5.7578zm3.7734-6.1406v5.7539h3.3984v-5.7539zm0 6.1406v5.7578h3.3984v-5.7578zm3.7734-6.1406v5.7539h3.3984v-5.7539zm0 6.1406v5.7578h3.3984v-5.7578zm-15.094 6.1406v5.7578h3.3984v-5.7578zm3.7734 0v5.7578h3.3984v-5.7578zm3.7734 0v5.7578h3.3984v-5.7578zm3.7734 0v5.7578h3.3984v-5.7578zm3.7734 0v5.7578h3.3984v-5.7578zm-15.094 6.1406v5.7578h3.3984v-5.7578zm3.7734 0v5.7578h3.3984v-5.7578zm3.7734 0v5.7578h3.3984v-5.7578zm3.7734 0v5.7578h3.3984v-5.7578zm3.7734 0v5.7578h3.3984v-5.7578zm-15.094 6.1406v5.7578h3.3984v-5.7578zm0 6.1445v5.7539h3.3984v-5.7539zm3.7734-6.1445v5.7578h3.3984v-5.7578zm0 6.1445v5.7539h3.3984v-5.7539zm3.7734-6.1445v5.7578h3.3984v-5.7578zm0 6.1445v5.7539h3.3984v-5.7539zm3.7734-6.1445v5.7578h3.3984v-5.7578zm0 6.1445v5.7539h3.3984v-5.7539zm3.7734-6.1445v5.7578h3.3984v-5.7578zm0 6.1445v5.7539h3.3984v-5.7539z" fill="#2563eb" fill-rule="evenodd"/>' +
+            '<path d="m75 17h20v38h-20zm0.75391 0.76953v5.7539h3.3984v-5.7539zm0 6.1406v5.7578h3.3984v-5.7578zm3.7734-6.1406v5.7539h3.3984v-5.7539zm0 6.1406v5.7578h3.3984v-5.7578zm3.7734-6.1406v5.7539h3.3984v-5.7539zm0 6.1406v5.7578h3.3984v-5.7578zm3.7734-6.1406v5.7539h3.3984v-5.7539zm0 6.1406v5.7578h3.3984v-5.7578zm3.7734-6.1406v5.7539h3.3984v-5.7539zm0 6.1406v5.7578h3.3984v-5.7578zm-15.094 6.1406v5.7578h3.3984v-5.7578zm3.7734 0v5.7578h3.3984v-5.7578zm3.7734 0v5.7578h3.3984v-5.7578zm3.7734 0v5.7578h3.3984v-5.7578zm3.7734 0v5.7578h3.3984v-5.7578zm-15.094 6.1406v5.7578h3.3984v-5.7578zm3.7734 0v5.7578h3.3984v-5.7578zm3.7734 0v5.7578h3.3984v-5.7578zm3.7734 0v5.7578h3.3984v-5.7578zm3.7734 0v5.7578h3.3984v-5.7578zm-15.094 6.1406v5.7578h3.3984v-5.7578zm0 6.1445v5.7539h3.3984v-5.7539zm3.7734-6.1445v5.7578h3.3984v-5.7578zm0 6.1445v5.7539h3.3984v-5.7539zm3.7734-6.1445v5.7578h3.3984v-5.7578zm0 6.1445v5.7539h3.3984v-5.7539zm3.7734-6.1445v5.7578h3.3984v-5.7578zm0 6.1445v5.7539h3.3984v-5.7539zm3.7734-6.1445v5.7578h3.3984v-5.7578zm0 6.1445v5.7539h3.3984v-5.7539z" fill="#2563eb" fill-rule="evenodd"/>' +
+            '</svg>';
+
+        // --- LOAD SVG INTO TEXTURE ---
+        // Canvas is always 2048x1152 (16:9 = 192:108 world ratio).
+        // drawScale controls how large the SVG is drawn inside that canvas.
+        function loadSvgTexture(svgString, drawScale, yOffset, callback) {
+            var img = new Image();
+            var blob = new Blob([svgString], { type: 'image/svg+xml' });
+            var url = URL.createObjectURL(blob);
+            img.onload = function() {
+                var CW = 2048, CH = 1152; // 16:9
+                var canvas = document.createElement('canvas');
+                canvas.width = CW; canvas.height = CH;
+                var ctx = canvas.getContext('2d');
+                var dw = CW * drawScale;
+                var dh = (img.naturalHeight / img.naturalWidth) * dw;
+                var ox = (CW - dw) / 2;
+                var oy = (CH - dh) / 2;
+                ctx.drawImage(img, ox, oy + (yOffset || 0), dw, dh);
+                URL.revokeObjectURL(url);
+                callback(canvas);
+            };
+            img.src = url;
+        }
+
+        // --- STATE ---
+        var simState = { bgX: 0, bgY: 0, bgW: 56, bgH: 31.5, fgX: 0, fgY: 0, fgW: 24, fgH: 13.5 };
+        var simDefaultState = { bgX: 0, bgY: 0, bgW: 56, bgH: 31.5, fgX: 0, fgY: 0, fgW: 24, fgH: 13.5 };
+
+        // Canvases for raw assets
+        var bgRawCanvas, fgRawCanvas;
+        var bgTexture, fgTexture;
+        var sceneReady = false;
+
+        // --- 3D SETUP ---
+        var mount = document.getElementById('sim-canvas-mount');
+        var scene = new THREE.Scene();
+        scene.background = new THREE.Color(simTheme.sceneBg);
+
+        var camPhys = new THREE.PerspectiveCamera(40, mount.clientWidth / mount.clientHeight, 0.1, 1000);
+        camPhys.position.set(120, 50, 80);
+
+        var renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        mount.appendChild(renderer.domElement);
+
+        var controls = new THREE.OrbitControls(camPhys, renderer.domElement);
+        controls.target.set(0, 0, -35);
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.08;
+        controls.update();
+
+        var Z_BG = -50, Z_FG = -20;
+
+        // Materials (placeholders until textures load)
+        var bgSolidMat = new THREE.MeshBasicMaterial({ color: 0x9999aa, transparent: true, opacity: 0.85, side: THREE.DoubleSide });
+        var bgGlassMat = new THREE.MeshBasicMaterial({ color: 0x9999aa, transparent: true, opacity: 0.15, side: THREE.DoubleSide });
+        var fgSolidMat = new THREE.MeshBasicMaterial({ color: 0xaa9977, transparent: true, opacity: 0.9, side: THREE.DoubleSide });
+        var fgGlassMat = new THREE.MeshBasicMaterial({ color: simTheme.fgGlass, transparent: true, opacity: 0.85, side: THREE.DoubleSide });
+
+        // Background glass wall
+        var bgGlassWall = new THREE.Mesh(new THREE.PlaneGeometry(192, 108), bgGlassMat);
+        bgGlassWall.position.set(0, 0, Z_BG - 0.1); scene.add(bgGlassWall);
+
+        // Planes
+        var bgPlane = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), bgSolidMat); scene.add(bgPlane);
+        var fgPlane = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), fgSolidMat); scene.add(fgPlane);
+        var fgGlass = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), fgGlassMat); scene.add(fgGlass);
+
+        // Bounding boxes
+        function createLineLoop(colorHex) {
+            var geo = new THREE.BufferGeometry();
+            return new THREE.LineLoop(geo, new THREE.LineBasicMaterial({ color: colorHex, linewidth: 2 }));
+        }
+        var bgBox = createLineLoop(0x2563eb); scene.add(bgBox);
+        var fgBox = createLineLoop(0xD97000); scene.add(fgBox);
+
+        // Frustum rays
+        var rayMat = new THREE.MeshBasicMaterial({ color: simTheme.camColor });
+        var rayGeo = new THREE.CylinderGeometry(0.15, 0.15, 1, 8);
+        var frustumRays = [];
+        for (var i = 0; i < 4; i++) {
+            var ray = new THREE.Mesh(rayGeo, rayMat); scene.add(ray); frustumRays.push(ray);
+        }
+
+        // Camera mesh
+        var camMeshGroup = new THREE.Group();
+        camMeshGroup.add(new THREE.Mesh(new THREE.BoxGeometry(3, 3, 4), new THREE.MeshBasicMaterial({ color: simTheme.camColor, transparent: true, opacity: 0.3 })));
+        camMeshGroup.add(new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.BoxGeometry(3, 3, 4)), new THREE.LineBasicMaterial({ color: simTheme.camColor })));
+        scene.add(camMeshGroup);
+
+        // Labels
+        function makeLabel(text, color) {
+            var c = document.createElement('canvas');
+            c.width = 512; c.height = 64;
+            var ctx = c.getContext('2d');
+            ctx.font = 'bold 36px -apple-system, sans-serif';
+            ctx.fillStyle = color; ctx.textAlign = 'center';
+            ctx.fillText(text, 256, 44);
+            var tex = new THREE.CanvasTexture(c);
+            var mat = new THREE.SpriteMaterial({ map: tex, transparent: true });
+            var s = new THREE.Sprite(mat);
+            s.scale.set(16, 2, 1);
+            return s;
+        }
+        var fgLabel = makeLabel('Foreground Plane', '#D97000');
+        fgLabel.position.set(0, 27, Z_FG); scene.add(fgLabel);
+        var bgLabel = makeLabel('Background Plane', '#2563eb');
+        bgLabel.position.set(0, 27, Z_BG); scene.add(bgLabel);
+        var camLabel = makeLabel('Camera', '#b05a00');
+        camLabel.scale.set(8, 1, 1); scene.add(camLabel);
+
+        // Grid
+        var gridHelper = new THREE.GridHelper(200, 50, simTheme.gridColor1, simTheme.gridColor2);
+        gridHelper.position.y = -18; scene.add(gridHelper);
+
+        scene.add(new THREE.AmbientLight(0xffffff, 1));
+
+        // Virtual camera + renderer
+        var virtualCamera = new THREE.PerspectiveCamera(45, 16/9, 0.1, 1000);
+        var camCanvas = document.getElementById('sim-camera-canvas');
+        var camRenderer = new THREE.WebGLRenderer({ canvas: camCanvas, antialias: true, preserveDrawingBuffer: true });
+        camRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+        // --- LOAD SVG TEXTURES ---
+        // Foreground person: smaller figure, shifted down slightly (~20% of canvas width)
+        loadSvgTexture(fgSvgStr, 0.167, 10, function(canvas) {
+            fgRawCanvas = canvas;
+            var tex = new THREE.CanvasTexture(canvas);
+            tex.minFilter = THREE.LinearFilter;
+            tex.anisotropy = renderer.capabilities.getMaxAnisotropy();
+            fgTexture = tex;
+            fgSolidMat.map = tex; fgSolidMat.color.set(0xffffff); fgSolidMat.needsUpdate = true;
+            checkReady();
+        });
+        // Background room: fills more of the plane (~55% of canvas width)
+        loadSvgTexture(bgSvgStr, 0.55, 0, function(canvas) {
+            bgRawCanvas = canvas;
+            var tex = new THREE.CanvasTexture(canvas);
+            tex.minFilter = THREE.LinearFilter;
+            tex.anisotropy = renderer.capabilities.getMaxAnisotropy();
+            bgTexture = tex;
+            bgSolidMat.map = tex; bgSolidMat.color.set(0xffffff); bgSolidMat.needsUpdate = true;
+            bgGlassMat.map = tex; bgGlassMat.color.set(0xffffff); bgGlassMat.needsUpdate = true;
+            checkReady();
+        });
+
+        var readyCount = 0;
+        function checkReady() {
+            readyCount++;
+            if (readyCount >= 2) sceneReady = true;
+        }
+
+        // --- RECORDING ---
+        var simAutoSave = false, simIsRecording = false, simMediaRecorder = null, simRecChunks = [];
+        var compCanvas = document.createElement('canvas');
+        var compCtx = compCanvas.getContext('2d', { alpha: false });
+
+        window.simToggleAutoSave = function() {
+            simAutoSave = !simAutoSave;
+            var btn = document.getElementById('sim-record-btn');
+            btn.innerText = 'Auto-Save: ' + (simAutoSave ? 'ON' : 'OFF');
+            btn.classList.toggle('sim-recording', simAutoSave);
+        };
+
+        function startRecordingVideo() {
+            var pr = window.devicePixelRatio || 1;
+            var sidebar = document.getElementById('sim-sidebar');
+            var sideW = sidebar.clientWidth;
+            compCanvas.width = (mount.clientWidth + sideW) * pr;
+            compCanvas.height = mount.clientHeight * pr;
+            simRecChunks = [];
+            var stream = compCanvas.captureStream(60);
+            try { simMediaRecorder = new MediaRecorder(stream, { mimeType: 'video/webm; codecs=vp9', videoBitsPerSecond: 12000000 }); }
+            catch (e) { simMediaRecorder = new MediaRecorder(stream); }
+            simMediaRecorder.ondataavailable = function(e) { if (e.data.size > 0) simRecChunks.push(e.data); };
+            simMediaRecorder.onstop = function() {
+                var blob = new Blob(simRecChunks, { type: 'video/webm' });
+                var url = URL.createObjectURL(blob);
+                var a = document.createElement('a'); a.href = url; a.download = 'cinecraft_export.webm'; a.click();
+            };
+            simMediaRecorder.start(); simIsRecording = true;
+        }
+
+        // --- SIDEBAR PANELS ---
+        var simPanels = { camera: true, foreground: true, background: true };
+
+        window.simToggleView = function(name) {
+            simPanels[name] = !simPanels[name];
+            var panel = document.getElementById('sim-panel-' + name);
+            var btnId = name === 'camera' ? 'sim-cam-toggle' : name === 'foreground' ? 'sim-fg-toggle' : 'sim-bg-toggle';
+            var btn = document.getElementById(btnId);
+            panel.classList.toggle('sim-panel-visible', simPanels[name]);
+            btn.innerHTML = (simPanels[name] ? '&#10003; ' : '') + name.charAt(0).toUpperCase() + name.slice(1);
+            btn.classList.toggle('sim-active', simPanels[name]);
+            var sidebar = document.getElementById('sim-sidebar');
+            sidebar.classList.toggle('sim-sidebar-active', simPanels.camera || simPanels.foreground || simPanels.background);
+            setTimeout(handleResize, 50);
+        };
+
+        // --- THEME ---
+        window.simToggleTheme = function() {
+            simIsDark = !simIsDark;
+            simTheme = simIsDark ? SIM_THEMES.dark : SIM_THEMES.light;
+            document.getElementById('sim-workspace').classList.toggle('sim-dark', simIsDark);
+            document.getElementById('sim-theme-btn').innerText = 'Dark Mode: ' + (simIsDark ? 'ON' : 'OFF');
+            scene.background.setHex(simTheme.sceneBg);
+            fgGlassMat.color.setHex(simTheme.fgGlass);
+            rayMat.color.setHex(simTheme.camColor);
+            camMeshGroup.children.forEach(function(c) { c.material.color.setHex(simTheme.camColor); });
+            scene.remove(gridHelper);
+            gridHelper = new THREE.GridHelper(200, 50, simTheme.gridColor1, simTheme.gridColor2);
+            gridHelper.position.y = -18; scene.add(gridHelper);
+        };
+
+        // --- RESET ---
+        window.simResetState = function() {
+            simIsAnimating = false;
+            if (simIsRecording) { if (simMediaRecorder && simMediaRecorder.state !== 'inactive') simMediaRecorder.stop(); simIsRecording = false; }
+            simState = { bgX: 0, bgY: 0, bgW: 56, bgH: 31.5, fgX: 0, fgY: 0, fgW: 24, fgH: 13.5 };
+            document.getElementById('sim-overlay').classList.remove('sim-fade-out');
+            updateGeometry();
+            controls.target.set(0, 0, -35);
+            controls.update();
+        };
+
+        // --- UV CROP ---
+        function updatePlaneUVCrop(geometry, x, y, w, h) {
+            var uv = geometry.attributes.uv;
+            var left = (x - w/2 + 96) / 192;
+            var right = (x + w/2 + 96) / 192;
+            var top = (y + h/2 + 54) / 108;
+            var bottom = (y - h/2 + 54) / 108;
+            uv.setXY(0, left, top); uv.setXY(1, right, top); uv.setXY(2, left, bottom); uv.setXY(3, right, bottom);
+            uv.needsUpdate = true;
+        }
+
+        // --- UPDATE GEOMETRY ---
+        function updateGeometry() {
+            var dW = simState.bgW - simState.fgW;
+            if (Math.abs(dW) < 0.01) dW = 0.01;
+            var camZ = (simState.bgW * Z_FG - simState.fgW * Z_BG) / dW;
+            var camX = simState.fgX + ((simState.fgX - simState.bgX) / (Z_FG - Z_BG)) * (camZ - Z_FG);
+            var camY = simState.fgY + ((simState.fgY - simState.bgY) / (Z_FG - Z_BG)) * (camZ - Z_FG);
+            var cameraPos = new THREE.Vector3(camX, camY, camZ);
+
+            camMeshGroup.position.copy(cameraPos);
+            camMeshGroup.lookAt(new THREE.Vector3(simState.bgX, simState.bgY, Z_BG));
+            camLabel.position.set(camX, camY + 4, camZ);
+
+            virtualCamera.position.copy(cameraPos);
+            virtualCamera.lookAt(new THREE.Vector3(simState.bgX, simState.bgY, Z_BG));
+            var distToBg = camZ - Z_BG;
+            virtualCamera.fov = Math.max(5, Math.min(120, 2 * Math.atan((simState.bgH / 2) / distToBg) * (180 / Math.PI)));
+            virtualCamera.updateProjectionMatrix();
+
+            bgPlane.position.set(simState.bgX, simState.bgY, Z_BG);
+            bgPlane.scale.set(simState.bgW, simState.bgH, 1);
+            updatePlaneUVCrop(bgPlane.geometry, simState.bgX, simState.bgY, simState.bgW, simState.bgH);
+
+            fgPlane.position.set(simState.fgX, simState.fgY, Z_FG);
+            fgPlane.scale.set(simState.fgW, simState.fgH, 1);
+            updatePlaneUVCrop(fgPlane.geometry, simState.fgX, simState.fgY, simState.fgW, simState.fgH);
+
+            fgGlass.position.set(simState.fgX, simState.fgY, Z_FG - 0.2);
+            fgGlass.scale.set(simState.fgW, simState.fgH, 1);
+
+            var bgPts = [
+                new THREE.Vector3(simState.bgX - simState.bgW/2, simState.bgY + simState.bgH/2, Z_BG),
+                new THREE.Vector3(simState.bgX + simState.bgW/2, simState.bgY + simState.bgH/2, Z_BG),
+                new THREE.Vector3(simState.bgX + simState.bgW/2, simState.bgY - simState.bgH/2, Z_BG),
+                new THREE.Vector3(simState.bgX - simState.bgW/2, simState.bgY - simState.bgH/2, Z_BG)
+            ];
+            bgBox.geometry.setFromPoints(bgPts);
+
+            var fgPts = [
+                new THREE.Vector3(simState.fgX - simState.fgW/2, simState.fgY + simState.fgH/2, Z_FG),
+                new THREE.Vector3(simState.fgX + simState.fgW/2, simState.fgY + simState.fgH/2, Z_FG),
+                new THREE.Vector3(simState.fgX + simState.fgW/2, simState.fgY - simState.fgH/2, Z_FG),
+                new THREE.Vector3(simState.fgX - simState.fgW/2, simState.fgY - simState.fgH/2, Z_FG)
+            ];
+            fgBox.geometry.setFromPoints(fgPts);
+
+            for (var ri = 0; ri < 4; ri++) {
+                var dir = new THREE.Vector3().subVectors(bgPts[ri], cameraPos);
+                frustumRays[ri].scale.set(1, dir.length(), 1);
+                frustumRays[ri].position.copy(cameraPos).lerp(bgPts[ri], 0.5);
+                if (dir.length() > 0.001) frustumRays[ri].quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), dir.clone().normalize());
+            }
+        }
+
+        // --- DRAW SIDE PANELS ---
+        function drawMonitorPanel(canvas, rawAsset, currentX, currentY, currentW, currentH, zoom, color, isForeground) {
+            if (!rawAsset) return;
+            var ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.save();
+            ctx.translate(canvas.width/2, canvas.height/2);
+            ctx.scale(zoom, zoom);
+            ctx.translate(-canvas.width/2, -canvas.height/2);
+
+            ctx.globalAlpha = 0.4;
+            ctx.drawImage(rawAsset, 0, 0, canvas.width, canvas.height);
+            ctx.globalAlpha = 1.0;
+
+            var sx = canvas.width / 192, sy = canvas.height / 108;
+            var cx = (currentX + 96) * sx, cy = (-currentY + 54) * sy;
+            var cw = currentW * sx, ch = currentH * sy;
+
+            ctx.save();
+            ctx.beginPath(); ctx.rect(cx - cw/2, cy - ch/2, cw, ch); ctx.clip();
+            ctx.drawImage(rawAsset, 0, 0, canvas.width, canvas.height);
+            ctx.restore();
+
+            if (isForeground) {
+                ctx.strokeStyle = simIsDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.1)';
+                ctx.lineWidth = 2 / zoom;
+                ctx.beginPath();
+                ctx.moveTo(canvas.width/2, 0); ctx.lineTo(canvas.width/2, canvas.height);
+                ctx.moveTo(0, canvas.height/2); ctx.lineTo(canvas.width, canvas.height/2);
+                ctx.stroke();
+            }
+
+            ctx.strokeStyle = color; ctx.lineWidth = 4 / zoom;
+            ctx.setLineDash([8/zoom, 4/zoom]);
+            ctx.strokeRect(cx - cw/2, cy - ch/2, cw, ch);
+            ctx.restore();
+        }
+
+        // --- ANIMATION ---
+        var simIsAnimating = false, simAnimProgress = 0, simStartState = {}, simEndState = {};
+
+        window.simStartAnim = function(type) {
+            simState = { bgX: 0, bgY: 0, bgW: 56, bgH: 31.5, fgX: 0, fgY: 0, fgW: 24, fgH: 13.5 };
+            updateGeometry();
+            if (simAutoSave) document.getElementById('sim-overlay').classList.add('sim-fade-out');
+            simStartState = {};
+            for (var k in simState) simStartState[k] = simState[k];
+
+            if (type === 'dolly-in') { simEndState = {}; for (var k in simState) simEndState[k] = simState[k]; simEndState.bgW = 44; simEndState.bgH = 24.75; simEndState.fgW = 18; simEndState.fgH = 10.125; }
+            else if (type === 'dolly-out') { simEndState = {}; for (var k in simState) simEndState[k] = simState[k]; simEndState.bgW = 72; simEndState.bgH = 40.5; simEndState.fgW = 32; simEndState.fgH = 18; }
+            else if (type === 'move-both') { simEndState = {}; for (var k in simState) simEndState[k] = simState[k]; simEndState.bgX = 8; simEndState.fgX = 8; }
+            else if (type === 'boom-up') { simEndState = {}; for (var k in simState) simEndState[k] = simState[k]; simEndState.bgY = 6; simEndState.fgY = 6; }
+            else if (type === 'move-fg') { simEndState = {}; for (var k in simState) simEndState[k] = simState[k]; simEndState.fgX = 8; }
+            else if (type === 'tilt-up') { simEndState = {}; for (var k in simState) simEndState[k] = simState[k]; simEndState.fgY = 6; }
+            else if (type === 'dolly-zoom') { simEndState = {}; for (var k in simState) simEndState[k] = simState[k]; simEndState.bgW = 84; simEndState.bgH = 47.25; }
+            else if (type === 'reverse-dz') { simEndState = {}; for (var k in simState) simEndState[k] = simState[k]; simEndState.bgW = 44; simEndState.bgH = 24.75; }
+            else if (type === 'uniform-zoom') { simEndState = {}; for (var k in simState) simEndState[k] = simState[k]; simEndState.bgW = 84; simEndState.bgH = 47.25; simEndState.fgW = 36; simEndState.fgH = 20.25; }
+
+            simIsAnimating = false;
+            setTimeout(function() { simIsAnimating = true; simAnimProgress = 0; if (simAutoSave) startRecordingVideo(); }, 500);
+        };
+
+        // --- RESIZE ---
+        function handleResize() {
+            var w = mount.clientWidth, h = mount.clientHeight;
+            if (w === 0 || h === 0) return;
+            camPhys.aspect = w / h;
+            camPhys.updateProjectionMatrix();
+            renderer.setSize(w, h, false);
+            controls.update();
+            if (simPanels.camera) camRenderer.setSize(1920, 1080, false);
+        }
+
+        // --- RENDER LOOP ---
+        function renderLoop() {
+            requestAnimationFrame(renderLoop);
+
+            if (simIsAnimating) {
+                simAnimProgress += 0.006;
+                if (simAnimProgress > 1.2) {
+                    simIsAnimating = false;
+                    setTimeout(function() {
+                        document.getElementById('sim-overlay').classList.remove('sim-fade-out');
+                        if (simIsRecording) { if (simMediaRecorder && simMediaRecorder.state !== 'inactive') simMediaRecorder.stop(); simIsRecording = false; }
+                    }, 1000);
+                } else {
+                    var t = simAnimProgress < 0.5 ? 4 * simAnimProgress * simAnimProgress * simAnimProgress : 1 - Math.pow(-2 * simAnimProgress + 2, 3) / 2;
+                    for (var k in simState) simState[k] = simStartState[k] + (simEndState[k] - simStartState[k]) * Math.min(t, 1.0);
+                }
+            }
+
+            handleResize();
+            updateGeometry();
+
+            renderer.render(scene, camPhys);
+
+            // Camera panel render
+            if (simPanels.camera) {
+                frustumRays.forEach(function(r) { r.visible = false; });
+                camMeshGroup.visible = false; gridHelper.visible = false;
+                fgBox.visible = false; bgBox.visible = false;
+                fgGlass.visible = false; bgGlassWall.visible = false;
+                fgLabel.visible = false; bgLabel.visible = false;
+                camLabel.visible = false;
+
+                camRenderer.render(scene, virtualCamera);
+
+                frustumRays.forEach(function(r) { r.visible = true; });
+                camMeshGroup.visible = true; gridHelper.visible = true;
+                fgBox.visible = true; bgBox.visible = true;
+                fgGlass.visible = true; bgGlassWall.visible = true;
+                fgLabel.visible = true; bgLabel.visible = true;
+                camLabel.visible = true;
+            }
+
+            // Side panels
+            if (simPanels.foreground && fgRawCanvas) {
+                drawMonitorPanel(document.getElementById('sim-fg-panel-canvas'), fgRawCanvas, simState.fgX, simState.fgY, simState.fgW, simState.fgH, 4.5, SIM_FG_COLOR, true);
+            }
+            if (simPanels.background && bgRawCanvas) {
+                drawMonitorPanel(document.getElementById('sim-bg-panel-canvas'), bgRawCanvas, simState.bgX, simState.bgY, simState.bgW, simState.bgH, 2.2, SIM_BG_COLOR, false);
+            }
+
+            // Composite recording
+            if (simIsRecording) {
+                var pr = window.devicePixelRatio || 1;
+                compCtx.fillStyle = simIsDark ? '#111827' : '#e8ecf0';
+                compCtx.fillRect(0, 0, compCanvas.width, compCanvas.height);
+                var sideW = document.getElementById('sim-sidebar').clientWidth * pr;
+                var mainW = compCanvas.width - sideW;
+                compCtx.drawImage(renderer.domElement, 0, 0, mainW, compCanvas.height);
+                if (sideW > 0) {
+                    compCtx.fillStyle = simIsDark ? '#0f172a' : '#f1f5f9';
+                    compCtx.fillRect(mainW, 0, sideW, compCanvas.height);
+                    var cy = 0, vps = [];
+                    if (simPanels.camera) vps.push({ title: 'Camera', el: camRenderer.domElement });
+                    if (simPanels.foreground) vps.push({ title: 'Foreground', el: document.getElementById('sim-fg-panel-canvas') });
+                    if (simPanels.background) vps.push({ title: 'Background', el: document.getElementById('sim-bg-panel-canvas') });
+                    var ph = compCanvas.height / vps.length;
+                    vps.forEach(function(v) {
+                        var hh = 30 * pr;
+                        compCtx.fillStyle = simIsDark ? '#1e293b' : '#e2e8f0';
+                        compCtx.fillRect(mainW, cy, sideW, hh);
+                        compCtx.fillStyle = '#94a3b8';
+                        compCtx.font = 'bold ' + (10 * pr) + 'px sans-serif';
+                        compCtx.textAlign = 'center';
+                        compCtx.fillText(v.title.toUpperCase(), mainW + sideW/2, cy + (20 * pr));
+                        var asp = v.el.width / v.el.height;
+                        var dw = sideW - (24 * pr), dh = dw / asp;
+                        if (dh > (ph - hh) - (24 * pr)) { dh = (ph - hh) - (24 * pr); dw = dh * asp; }
+                        compCtx.drawImage(v.el, mainW + (sideW - dw)/2, cy + hh + ((ph - hh) - dh)/2, dw, dh);
+                        cy += ph;
+                    });
+                }
+            }
+        }
+
+        // --- INIT ---
+        window.addEventListener('resize', handleResize);
+        handleResize();
+        updateGeometry();
+        renderLoop();
+
+    })();
+    </script>
+    <!-- End Two-Plane Demo -->
+
     <div id="examples">
         <h2>Examples</h2>
         <p class="coming-soon-text">Coming soon</p>
@@ -260,9 +1038,9 @@
     <!-- Default Statcounter code for CineCraft
     https://trannhan.com/cinecraft -->
     <script type="text/javascript">
-        var sc_project=13202455; 
-        var sc_invisible=1; 
-        var sc_security="5cecba59"; 
+        var sc_project=13202455;
+        var sc_invisible=1;
+        var sc_security="5cecba59";
     </script>
     <script type="text/javascript"
         src="https://www.statcounter.com/counter/counter.js"
