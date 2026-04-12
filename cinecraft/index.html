@@ -276,6 +276,7 @@
                         <button class="sim-ctrl-btn" onclick="simToggleTheme()" id="sim-theme-btn">Dark Mode: OFF</button>
                         <button class="sim-ctrl-btn" id="sim-record-btn" onclick="simToggleAutoSave()">Auto-Save: OFF</button>
                         <button class="sim-ctrl-btn" onclick="simResetState()">Reset Pos</button>
+                        <button class="sim-ctrl-btn" type="button" onclick="simToggleFullscreen()" id="sim-fullscreen-btn" title="Fill the entire screen with this viewer">Full Screen</button>
                         <div class="sim-sep"></div>
                         <span class="sim-label">Views</span>
                         <button id="sim-cam-toggle" class="sim-ctrl-btn sim-active" onclick="simToggleView('camera')">&#10003; Camera</button>
@@ -301,6 +302,7 @@
                 </div>
                 <div id="sim-canvas-mount"></div>
             </div>
+            <div id="sim-splitter" class="sim-splitter" role="separator" aria-orientation="vertical" aria-label="Resize sidebar" title="Drag to resize sidebar"></div>
             <!-- Sidebar -->
             <div id="sim-sidebar" class="sim-sidebar-active">
                 <div class="sim-panel sim-panel-visible" id="sim-panel-camera">
@@ -356,6 +358,7 @@
             --sim-overlay-bg: rgba(0, 0, 0, 0.3);
         }
         #sim-workspace {
+            --sim-sidebar-width: 180px;
             display: flex;
             width: 100%;
             aspect-ratio: 16 / 9;
@@ -364,6 +367,16 @@
             background: var(--sim-bg);
             transition: background-color 0.3s;
             border: 1px solid var(--sim-divider);
+        }
+        /* Fullscreen: entire workspace (3D view + sidebar) fills the display */
+        #sim-workspace:fullscreen,
+        #sim-workspace:-webkit-full-screen {
+            width: 100%;
+            height: 100%;
+            max-height: 100%;
+            aspect-ratio: unset;
+            border-radius: 0;
+            border: none;
         }
         #sim-main-area {
             flex: 1;
@@ -489,19 +502,57 @@
         }
         .sim-fade-out { opacity: 0; pointer-events: none; }
 
+        /* Draggable divider between main view and sidebar */
+        .sim-splitter {
+            display: none;
+            flex: 0 0 10px;
+            width: 10px;
+            margin: 0 -3px;
+            z-index: 50;
+            cursor: col-resize;
+            touch-action: none;
+            user-select: none;
+            align-self: stretch;
+            position: relative;
+            background: transparent;
+        }
+        #sim-workspace.sim-has-sidebar .sim-splitter {
+            display: block;
+        }
+        .sim-splitter::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 50%;
+            width: 3px;
+            transform: translateX(-50%);
+            background: var(--sim-divider);
+            border-radius: 2px;
+            transition: background 0.15s, width 0.15s;
+        }
+        .sim-splitter:hover::after,
+        #sim-workspace.sim-splitter-dragging .sim-splitter::after {
+            background: var(--sim-accent-orange);
+            width: 4px;
+        }
+        #sim-workspace.sim-splitter-dragging #sim-sidebar {
+            transition: none !important;
+        }
+
         /* Sidebar */
         #sim-sidebar {
             display: flex;
             flex-direction: column;
             width: 0;
             background: var(--sim-sidebar-bg);
-            border-left: 1px solid var(--sim-divider);
+            border-left: none;
             transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             overflow: hidden;
             height: 100%;
         }
         #sim-sidebar.sim-sidebar-active {
-            width: 180px;
+            width: var(--sim-sidebar-width);
             flex-shrink: 0;
         }
         .sim-panel {
@@ -570,7 +621,6 @@
 
         @media (max-width: 600px) {
             #sim-workspace { aspect-ratio: 4 / 3; }
-            #sim-sidebar.sim-sidebar-active { width: 120px; }
             .sim-panel-header { font-size: 8px; }
             .sim-row { flex-wrap: wrap; }
             .sim-ctrl-btn, .sim-action-btn { padding: 3px 7px; font-size: 10px; }
@@ -824,6 +874,33 @@
 
         // --- SIDEBAR PANELS ---
         var simPanels = { camera: true, foreground: true, background: true };
+        var simSidebarWidthPx = 180;
+        try {
+            var _sw = localStorage.getItem('simSidebarWidth');
+            if (_sw) {
+                var _w = parseInt(_sw, 10);
+                if (!isNaN(_w) && _w >= 100 && _w < 4000) simSidebarWidthPx = _w;
+            }
+        } catch (e) {}
+
+        function applySimSidebarWidth(px, persist) {
+            var ws = document.getElementById('sim-workspace');
+            if (!ws) return;
+            var minW = 100;
+            var maxW = Math.max(minW, Math.min(Math.floor(ws.clientWidth * 0.72), ws.clientWidth - 160));
+            px = Math.max(minW, Math.min(maxW, px));
+            simSidebarWidthPx = px;
+            ws.style.setProperty('--sim-sidebar-width', px + 'px');
+            if (persist !== false) {
+                try { localStorage.setItem('simSidebarWidth', String(px)); } catch (err) {}
+            }
+        }
+
+        function syncSimSidebarChrome() {
+            var ws = document.getElementById('sim-workspace');
+            var has = !!(simPanels.camera || simPanels.foreground || simPanels.background);
+            ws.classList.toggle('sim-has-sidebar', has);
+        }
 
         window.simToggleView = function(name) {
             simPanels[name] = !simPanels[name];
@@ -835,6 +912,7 @@
             btn.classList.toggle('sim-active', simPanels[name]);
             var sidebar = document.getElementById('sim-sidebar');
             sidebar.classList.toggle('sim-sidebar-active', simPanels.camera || simPanels.foreground || simPanels.background);
+            syncSimSidebarChrome();
             setTimeout(handleResize, 50);
         };
 
@@ -1000,12 +1078,97 @@
         function handleResize() {
             var w = mount.clientWidth, h = mount.clientHeight;
             if (w === 0 || h === 0) return;
+            var ws = document.getElementById('sim-workspace');
+            if (ws && ws.classList.contains('sim-has-sidebar')) {
+                var minW = 100;
+                var maxW = Math.max(minW, Math.min(Math.floor(ws.clientWidth * 0.72), ws.clientWidth - 160));
+                var clamped = Math.max(minW, Math.min(maxW, simSidebarWidthPx));
+                if (clamped !== simSidebarWidthPx) {
+                    simSidebarWidthPx = clamped;
+                    ws.style.setProperty('--sim-sidebar-width', clamped + 'px');
+                    try { localStorage.setItem('simSidebarWidth', String(clamped)); } catch (e) {}
+                }
+            }
             camPhys.aspect = w / h;
             camPhys.updateProjectionMatrix();
             renderer.setSize(w, h, false);
             controls.update();
             if (simPanels.camera) camRenderer.setSize(1920, 1080, false);
         }
+
+        function syncSimFullscreenButton() {
+            var ws = document.getElementById('sim-workspace');
+            var active = document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement;
+            var btn = document.getElementById('sim-fullscreen-btn');
+            if (btn) btn.textContent = (active === ws) ? 'Exit Full Screen' : 'Full Screen';
+        }
+
+        window.simToggleFullscreen = function() {
+            var ws = document.getElementById('sim-workspace');
+            var active = document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement;
+            if (active === ws) {
+                var exit = document.exitFullscreen || document.webkitExitFullscreen || document.mozCancelFullScreen || document.msExitFullscreen;
+                if (exit) exit.call(document);
+            } else {
+                var req = ws.requestFullscreen || ws.webkitRequestFullscreen || ws.mozRequestFullScreen || ws.msRequestFullscreen;
+                if (req) req.call(ws).catch(function() {});
+            }
+        };
+
+        function onSimFullscreenEvent() {
+            syncSimFullscreenButton();
+            handleResize();
+        }
+
+        // --- SIDEBAR SPLITTER (drag to resize) ---
+        (function setupSimSplitter() {
+            var splitter = document.getElementById('sim-splitter');
+            var ws = document.getElementById('sim-workspace');
+            if (!splitter || !ws) return;
+            var dragging = false;
+            var startX = 0;
+            var startWidth = 180;
+
+            function onPointerMove(e) {
+                if (!dragging) return;
+                var dx = e.clientX - startX;
+                applySimSidebarWidth(startWidth - dx, true);
+                handleResize();
+            }
+            function onPointerUp(e) {
+                if (!dragging) return;
+                dragging = false;
+                ws.classList.remove('sim-splitter-dragging');
+                controls.enabled = true;
+                splitter.removeEventListener('pointermove', onPointerMove);
+                splitter.removeEventListener('pointerup', onPointerUp);
+                splitter.removeEventListener('pointercancel', onPointerUp);
+                document.removeEventListener('pointermove', onPointerMove);
+                document.removeEventListener('pointerup', onPointerUp);
+            }
+
+            splitter.addEventListener('pointerdown', function(e) {
+                if (e.button !== 0 || !ws.classList.contains('sim-has-sidebar')) return;
+                e.preventDefault();
+                dragging = true;
+                startX = e.clientX;
+                startWidth = simSidebarWidthPx;
+                ws.classList.add('sim-splitter-dragging');
+                controls.enabled = false;
+                splitter.addEventListener('pointermove', onPointerMove);
+                splitter.addEventListener('pointerup', onPointerUp);
+                splitter.addEventListener('pointercancel', onPointerUp);
+                document.addEventListener('pointermove', onPointerMove);
+                document.addEventListener('pointerup', onPointerUp);
+            });
+
+            splitter.addEventListener('dblclick', function(e) {
+                e.preventDefault();
+                if (!ws.classList.contains('sim-has-sidebar')) return;
+                applySimSidebarWidth(180, true);
+                handleResize();
+            });
+        })();
 
         // --- RENDER LOOP ---
         function renderLoop() {
@@ -1093,6 +1256,12 @@
 
         // --- INIT ---
         window.addEventListener('resize', handleResize);
+        document.addEventListener('fullscreenchange', onSimFullscreenEvent);
+        document.addEventListener('webkitfullscreenchange', onSimFullscreenEvent);
+        document.addEventListener('mozfullscreenchange', onSimFullscreenEvent);
+        document.addEventListener('MSFullscreenChange', onSimFullscreenEvent);
+        syncSimSidebarChrome();
+        applySimSidebarWidth(simSidebarWidthPx, true);
         handleResize();
         updateGeometry();
         renderLoop();
