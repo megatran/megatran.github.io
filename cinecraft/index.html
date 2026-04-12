@@ -252,12 +252,27 @@
             Our shot planning interface represents scenes as parallel foreground and background layers suspended in 3D space. Users design and previsualize shots by manipulating viewport rectangles on each layer. Camera position, field of view, zoom, and focus are then <em>derived</em> from these viewports. The <strong>Camera Feed</strong> panel shows the resulting view that the user would see through the viewfinder during filming. In the app, users can replace these abstract layers with real photos from location scouting. During capture, the shot plan drives augmented reality guidance with live object tracking and segmentation, helping the camera operator match the planned framing while the app automatically adjusts zoom and focus in real time (see our video above). Try the presets below to see how different viewport combinations produce distinct cinematic effects.
         </p>
 
+        <details class="demo-hints-collapsible">
+            <summary>More details on these camera movements</summary>
+            <div class="demo-hints-grid">
+                <div><strong>Dolly Zoom:</strong> background viewport expands, foreground stays fixed. Also known as the <a href="https://www.youtube.com/shorts/o1FAqA--36Y" target="_blank" rel="noopener noreferrer">Hitchcock/Vertigo effect</a>.</div>
+                <div><strong>Reverse Dolly Zoom:</strong> background viewport shrinks, foreground stays fixed.</div>
+                <div><strong>Optical Zoom:</strong> both viewports scale at the same rate. No parallax.</div>
+                <div><strong>Pan:</strong> foreground viewport shifts horizontally. Camera rotates.</div>
+                <div><strong>Tilt Up:</strong> foreground viewport shifts vertically. Camera tilts.</div>
+                <div><strong>Truck Right:</strong> both viewports shift horizontally together. Camera translates.</div>
+                <div><strong>Boom Up:</strong> both viewports shift vertically together. Camera rises.</div>
+                <div><strong>Dolly In:</strong> both viewports shrink, foreground more than background. Camera moves forward.</div>
+                <div><strong>Dolly Out:</strong> both viewports grow, foreground more than background. Camera moves backward.</div>
+            </div>
+        </details>
+
         <!-- Workspace container -->
         <div id="sim-workspace">
             <div id="sim-main-area">
                 <!-- Overlay controls -->
-                <div id="sim-overlay">
-                    <div class="sim-row">
+                <div id="sim-overlay-top">
+                    <div class="sim-row" id="sim-row-controls">
                         <button class="sim-ctrl-btn" onclick="simToggleTheme()" id="sim-theme-btn">Dark Mode: OFF</button>
                         <button class="sim-ctrl-btn" id="sim-record-btn" onclick="simToggleAutoSave()">Auto-Save: OFF</button>
                         <button class="sim-ctrl-btn" onclick="simResetState()">Reset Pos</button>
@@ -266,8 +281,11 @@
                         <button id="sim-cam-toggle" class="sim-ctrl-btn sim-active" onclick="simToggleView('camera')">&#10003; Camera</button>
                         <button id="sim-fg-toggle" class="sim-ctrl-btn sim-active" onclick="simToggleView('foreground')">&#10003; Foreground</button>
                         <button id="sim-bg-toggle" class="sim-ctrl-btn sim-active" onclick="simToggleView('background')">&#10003; Background</button>
+                        <button class="sim-collapse-btn" onclick="simCollapseRow('sim-row-controls')">&#8722;</button>
                     </div>
-                    <div class="sim-row">
+                </div>
+                <div id="sim-overlay-bottom">
+                    <div class="sim-row" id="sim-row-sequences">
                         <span class="sim-label">Sequences</span>
                         <button class="sim-action-btn sim-action-secondary" onclick="simStartAnim('dolly-zoom')">Dolly Zoom</button>
                         <button class="sim-action-btn sim-action-secondary" onclick="simStartAnim('reverse-dz')">Reverse Dolly Zoom</button>
@@ -278,6 +296,7 @@
                         <button class="sim-action-btn" onclick="simStartAnim('boom-up')">Boom Up</button>
                         <button class="sim-action-btn" onclick="simStartAnim('dolly-in')">Dolly In</button>
                         <button class="sim-action-btn" onclick="simStartAnim('dolly-out')">Dolly Out</button>
+                        <button class="sim-collapse-btn" onclick="simCollapseRow('sim-row-sequences')">&#8722;</button>
                     </div>
                 </div>
                 <div id="sim-canvas-mount"></div>
@@ -299,17 +318,6 @@
             </div>
         </div>
 
-        <div class="demo-hint" style="text-align:left; max-width:820px; margin:10px auto 5px auto; columns:2; column-gap:24px; line-height:1.7;">
-            <strong>Dolly Zoom:</strong> background viewport expands, foreground stays fixed. Also known as the <a href="https://www.youtube.com/shorts/o1FAqA--36Y" target="_blank" rel="noopener noreferrer" style="color:#D97000; text-decoration:none;">Hitchcock/Vertigo effect</a>.<br>
-            <strong>Reverse Dolly Zoom:</strong> background viewport shrinks, foreground stays fixed.<br>
-            <strong>Optical Zoom:</strong> both viewports scale at the same rate. No parallax.<br>
-            <strong>Pan:</strong> foreground viewport shifts horizontally. Camera rotates.<br>
-            <strong>Tilt Up:</strong> foreground viewport shifts vertically. Camera tilts.<br>
-            <strong>Truck Right:</strong> both viewports shift horizontally together. Camera translates.<br>
-            <strong>Boom Up:</strong> both viewports shift vertically together. Camera rises.<br>
-            <strong>Dolly In:</strong> both viewports shrink, foreground more than background. Camera moves forward.<br>
-            <strong>Dolly Out:</strong> both viewports grow, foreground more than background. Camera moves backward.
-        </div>
     </div>
 
     <style>
@@ -350,7 +358,7 @@
         #sim-workspace {
             display: flex;
             width: 100%;
-            height: 600px;
+            aspect-ratio: 16 / 9;
             border-radius: 10px;
             overflow: hidden;
             background: var(--sim-bg);
@@ -376,30 +384,52 @@
         }
 
         /* Overlay controls */
-        #sim-overlay {
+        #sim-overlay-top {
             position: absolute;
-            top: 10px;
-            left: 10px;
+            top: 8px;
+            left: 8px;
+            right: 8px;
             z-index: 100;
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
             pointer-events: none;
-            max-width: calc(100% - 20px);
         }
-        #sim-overlay > * { pointer-events: auto; }
+        #sim-overlay-top > * { pointer-events: auto; }
+        #sim-overlay-bottom {
+            position: absolute;
+            bottom: 8px;
+            left: 8px;
+            right: 8px;
+            z-index: 100;
+            pointer-events: none;
+        }
+        #sim-overlay-bottom > * { pointer-events: auto; }
         .sim-row {
             display: flex;
             gap: 5px;
             background: var(--sim-overlay-bg);
-            backdrop-filter: blur(12px);
+            backdrop-filter: blur(8px);
             padding: 5px 8px;
             border-radius: 8px;
             border: 1px solid var(--sim-divider);
             align-items: center;
             flex-wrap: wrap;
             width: fit-content;
+            position: relative;
         }
+        .sim-row.sim-collapsed > *:not(.sim-collapse-btn):not(.sim-label) { display: none; }
+        .sim-row.sim-collapsed { padding: 3px 8px; }
+        .sim-collapse-btn {
+            background: none;
+            border: none;
+            color: #94a3b8;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            padding: 0 4px;
+            line-height: 1;
+            margin-left: auto;
+            font-family: inherit;
+        }
+        .sim-collapse-btn:hover { color: var(--sim-accent-orange); }
         .sim-ctrl-btn, .sim-action-btn {
             background: var(--sim-btn-bg);
             color: var(--sim-btn-text);
@@ -415,7 +445,9 @@
             align-items: center;
             gap: 4px;
             font-family: inherit;
+            opacity: 0.7;
         }
+        .sim-ctrl-btn:hover, .sim-action-btn:hover { opacity: 1; }
         .sim-ctrl-btn:hover { background: var(--sim-btn-hover); }
         .sim-ctrl-btn.sim-active {
             background: var(--sim-accent-blue);
@@ -427,7 +459,6 @@
             color: white;
             border: none;
         }
-        .sim-action-btn:hover { filter: brightness(1.1); }
         .sim-action-btn.sim-action-secondary {
             background: var(--sim-accent-blue);
         }
@@ -470,7 +501,7 @@
             height: 100%;
         }
         #sim-sidebar.sim-sidebar-active {
-            width: 260px;
+            width: 180px;
             flex-shrink: 0;
         }
         .sim-panel {
@@ -509,23 +540,40 @@
             object-fit: contain;
         }
 
-        .demo-hint {
+        .demo-hints-collapsible {
+            margin: 0 0 12px 0;
             font-size: 12px;
             color: #888;
-            text-align: center;
-            line-height: 1.5;
-            margin: 10px 0 5px 0;
         }
-        .demo-hint strong { color: #666; }
+        .demo-hints-collapsible summary {
+            cursor: pointer;
+            font-weight: 700;
+            color: #666;
+            font-size: 13px;
+            padding: 6px 0;
+            user-select: none;
+        }
+        .demo-hints-collapsible summary:hover { color: #D97000; }
+        .demo-hints-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 6px 24px;
+            margin-top: 8px;
+            line-height: 1.6;
+        }
+        .demo-hints-grid strong { color: #666; }
+        .demo-hints-grid a { color: #D97000; text-decoration: none; }
+        .demo-hints-grid a:hover { text-decoration: underline; }
+        @media (max-width: 600px) {
+            .demo-hints-grid { grid-template-columns: 1fr; }
+        }
 
         @media (max-width: 600px) {
-            #sim-workspace { height: 450px; flex-direction: column; }
-            #sim-sidebar.sim-sidebar-active { width: 100%; height: 180px; flex-shrink: 0; flex-direction: row; }
-            .sim-panel { border-bottom: none; border-right: 1px solid var(--sim-divider); }
-            .sim-panel:last-child { border-right: none; }
+            #sim-workspace { aspect-ratio: 4 / 3; }
+            #sim-sidebar.sim-sidebar-active { width: 120px; }
+            .sim-panel-header { font-size: 8px; }
             .sim-row { flex-wrap: wrap; }
             .sim-ctrl-btn, .sim-action-btn { padding: 3px 7px; font-size: 10px; }
-            #sim-overlay { max-width: calc(100% - 16px); }
         }
     </style>
 
@@ -600,7 +648,7 @@
         scene.background = new THREE.Color(simTheme.sceneBg);
 
         var camPhys = new THREE.PerspectiveCamera(40, mount.clientWidth / mount.clientHeight, 0.1, 1000);
-        camPhys.position.set(120, 50, 80);
+        camPhys.position.set(50, 22, 42);
 
         var renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
         renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
@@ -718,6 +766,13 @@
         var compCanvas = document.createElement('canvas');
         var compCtx = compCanvas.getContext('2d', { alpha: false });
 
+        window.simCollapseRow = function(rowId) {
+            var row = document.getElementById(rowId);
+            var btn = row.querySelector('.sim-collapse-btn');
+            row.classList.toggle('sim-collapsed');
+            btn.innerHTML = row.classList.contains('sim-collapsed') ? '&#43;' : '&#8722;';
+        };
+
         window.simToggleAutoSave = function() {
             simAutoSave = !simAutoSave;
             var btn = document.getElementById('sim-record-btn');
@@ -780,8 +835,9 @@
             simIsAnimating = false;
             if (simIsRecording) { if (simMediaRecorder && simMediaRecorder.state !== 'inactive') simMediaRecorder.stop(); simIsRecording = false; }
             simState = { bgX: 0, bgY: 0, bgW: 56, bgH: 31.5, fgX: 0, fgY: 0, fgW: 24, fgH: 13.5 };
-            document.getElementById('sim-overlay').classList.remove('sim-fade-out');
+            document.getElementById('sim-overlay-top').classList.remove('sim-fade-out'); document.getElementById('sim-overlay-bottom').classList.remove('sim-fade-out');
             updateGeometry();
+            camPhys.position.set(50, 22, 42);
             controls.target.set(0, 0, -35);
             controls.update();
         };
@@ -895,7 +951,7 @@
         window.simStartAnim = function(type) {
             simState = { bgX: 0, bgY: 0, bgW: 56, bgH: 31.5, fgX: 0, fgY: 0, fgW: 24, fgH: 13.5 };
             updateGeometry();
-            if (simAutoSave) document.getElementById('sim-overlay').classList.add('sim-fade-out');
+            if (simAutoSave) document.getElementById('sim-overlay-top').classList.add('sim-fade-out'); document.getElementById('sim-overlay-bottom').classList.add('sim-fade-out');
             simStartState = {};
             for (var k in simState) simStartState[k] = simState[k];
 
@@ -933,7 +989,7 @@
                 if (simAnimProgress > 1.2) {
                     simIsAnimating = false;
                     setTimeout(function() {
-                        document.getElementById('sim-overlay').classList.remove('sim-fade-out');
+                        document.getElementById('sim-overlay-top').classList.remove('sim-fade-out'); document.getElementById('sim-overlay-bottom').classList.remove('sim-fade-out');
                         if (simIsRecording) { if (simMediaRecorder && simMediaRecorder.state !== 'inactive') simMediaRecorder.stop(); simIsRecording = false; }
                     }, 1000);
                 } else {
