@@ -618,7 +618,7 @@
             var blob = new Blob([svgString], { type: 'image/svg+xml' });
             var url = URL.createObjectURL(blob);
             img.onload = function() {
-                var CW = 2048, CH = 1152; // 16:9
+                var CW = 4096, CH = 2304; // 16:9
                 var canvas = document.createElement('canvas');
                 canvas.width = CW; canvas.height = CH;
                 var ctx = canvas.getContext('2d');
@@ -699,25 +699,48 @@
         camMeshGroup.add(new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.BoxGeometry(3, 3, 4)), new THREE.LineBasicMaterial({ color: simTheme.camColor })));
         scene.add(camMeshGroup);
 
-        // Labels
-        function makeLabel(text, color) {
+        // Plane labels: Mesh quads coplanar with fg/bg planes (sprites always face camera and can clip/warp).
+        var SIM_LABEL_FONT = 'bold 36px -apple-system, sans-serif';
+        var PLANE_LABEL_H = 2;
+        var PLANE_LABEL_Z_EPS = 0.15;
+        function makePlaneLabelMesh(text, color) {
+            var padX = 40;
+            var texH = 64;
             var c = document.createElement('canvas');
-            c.width = 512; c.height = 64;
+            c.height = texH;
             var ctx = c.getContext('2d');
-            ctx.font = 'bold 36px -apple-system, sans-serif';
-            ctx.fillStyle = color; ctx.textAlign = 'center';
-            ctx.fillText(text, 256, 44);
+            ctx.font = SIM_LABEL_FONT;
+            var tw = ctx.measureText(text).width;
+            c.width = Math.max(128, Math.ceil(tw + padX * 2));
+            ctx.font = SIM_LABEL_FONT;
+            ctx.fillStyle = color;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(text, c.width / 2, texH / 2);
             var tex = new THREE.CanvasTexture(c);
-            var mat = new THREE.SpriteMaterial({ map: tex, transparent: true });
-            var s = new THREE.Sprite(mat);
-            s.scale.set(16, 2, 1);
-            return s;
+            tex.minFilter = THREE.LinearFilter;
+            tex.generateMipmaps = false;
+            var wWorld = PLANE_LABEL_H * (c.width / texH);
+            var geo = new THREE.PlaneGeometry(wWorld, PLANE_LABEL_H);
+            var mat = new THREE.MeshBasicMaterial({
+                map: tex,
+                transparent: true,
+                side: THREE.DoubleSide,
+                depthWrite: false
+            });
+            return new THREE.Mesh(geo, mat);
         }
-        var fgLabel = makeLabel('Foreground Plane', '#D97000');
-        fgLabel.position.set(0, 27, Z_FG); scene.add(fgLabel);
-        var bgLabel = makeLabel('Background Plane', '#2563eb');
-        bgLabel.position.set(0, 27, Z_BG); scene.add(bgLabel);
-        var camLabel = makeLabel('Camera', '#b05a00');
+        var fgLabel = makePlaneLabelMesh('Foreground Plane', '#D97000');
+        scene.add(fgLabel);
+        var bgLabel = makePlaneLabelMesh('Background Plane', '#2563eb');
+        scene.add(bgLabel);
+        var camC = document.createElement('canvas');
+        camC.width = 512; camC.height = 64;
+        var camCtx = camC.getContext('2d');
+        camCtx.font = SIM_LABEL_FONT;
+        camCtx.fillStyle = '#b05a00'; camCtx.textAlign = 'center';
+        camCtx.fillText('Camera', 256, 44);
+        var camLabel = new THREE.Sprite(new THREE.SpriteMaterial({ map: new THREE.CanvasTexture(camC), transparent: true }));
         camLabel.scale.set(8, 1, 1); scene.add(camLabel);
 
         // Grid
@@ -898,6 +921,10 @@
                 new THREE.Vector3(simState.fgX - simState.fgW/2, simState.fgY - simState.fgH/2, Z_FG)
             ];
             fgBox.geometry.setFromPoints(fgPts);
+
+            var labelGap = 1.25;
+            fgLabel.position.set(simState.fgX, simState.fgY + simState.fgH / 2 + PLANE_LABEL_H / 2 + labelGap, Z_FG + PLANE_LABEL_Z_EPS);
+            bgLabel.position.set(simState.bgX, simState.bgY + simState.bgH / 2 + PLANE_LABEL_H / 2 + labelGap, Z_BG + PLANE_LABEL_Z_EPS);
 
             for (var ri = 0; ri < 4; ri++) {
                 var dir = new THREE.Vector3().subVectors(bgPts[ri], cameraPos);
