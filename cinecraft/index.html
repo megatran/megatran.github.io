@@ -148,26 +148,74 @@
             border: none;
         }
 
-        .coming-soon {
-            text-align: center;
-            padding: 40px;
-            background: #f5f5f5;
-            border-radius: 8px;
-            margin: 20px 0;
-            color: #666;
+        #examples {
+            margin: 30px 0 40px 0;
+            padding-top: 20px;
+            border-top: 1px solid #e5e5e5;
         }
-
-        .coming-soon h3 {
-            margin: 0 0 10px 0;
+        #examples > h2 {
             color: #333;
         }
-
-        .coming-soon-text {
-            text-align: center;
+        .examples-intro {
+            font-size: calc(0.85rem + 0.1vw);
             color: #666;
-            padding: 20px 0;
+            margin-bottom: 18px;
         }
-
+        .examples-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 14px 12px;
+        }
+        @media (max-width: 900px) {
+            .examples-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        }
+        @media (max-width: 520px) {
+            .examples-grid { grid-template-columns: 1fr; }
+        }
+        .example-video {
+            margin: 0;
+        }
+        .example-video video {
+            width: 100%;
+            height: auto;
+            display: block;
+            border-radius: 8px;
+            background: #111;
+        }
+        .example-video figcaption {
+            font-size: calc(0.75rem + 0.05vw);
+            color: #666;
+            margin-top: 8px;
+            line-height: 1.4;
+        }
+        .examples-block {
+            margin-bottom: 32px;
+        }
+        .examples-block:last-child {
+            margin-bottom: 0;
+        }
+        .examples-block h3 {
+            font-size: calc(0.95rem + 0.15vw);
+            color: #333;
+            margin: 0 0 10px 0;
+            font-weight: 700;
+        }
+        .examples-note {
+            font-size: calc(0.8rem + 0.05vw);
+            color: #555;
+            margin: 0 0 16px 0;
+            line-height: 1.55;
+            padding: 12px 14px;
+            background: #f8fafc;
+            border-radius: 8px;
+            border-left: 3px solid #D97000;
+        }
+        .examples-mini-note {
+            font-size: calc(0.78rem + 0.03vw);
+            color: #777;
+            margin: -4px 0 14px 0;
+            line-height: 1.45;
+        }
         /* Mobile-specific adjustments */
         @media (max-width: 600px) {
             body {
@@ -1272,12 +1320,61 @@
 
     <div id="examples">
         <h2>Examples</h2>
-        <p class="coming-soon-text">Coming soon</p>
-    </div>
+        <p class="examples-intro">Additional prototype clips (720p, compressed for the web). Use controls to play.</p>
 
-    <div class="coming-soon">
-        <h3>See you at CHI 2026 in Barcelona! 🇪🇸</h3>
-        <p>Paper, video presentation, and app download will be available closer to the conference.</p>
+        <div class="examples-block">
+            <h3>Western standoff</h3>
+            <p class="examples-mini-note">Longer clip on YouTube (unlisted).</p>
+            <div class="video-container">
+                <iframe src="https://www.youtube.com/embed/3WoSBRV_f04" title="Western standoff comparison" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+            </div>
+        </div>
+
+        <div class="examples-block">
+            <h3>Chase tracking shots</h3>
+            <p class="examples-note">These scenes were recorded using the same, scale-invariant shot plan.</p>
+            <div class="examples-grid">
+                <figure class="example-video">
+                    <video controls preload="metadata" playsinline src="examples/CineCraft_ChaseTrackingDollyZoom_ShotPlan.mp4"></video>
+                    <figcaption>Shot plan</figcaption>
+                </figure>
+                <figure class="example-video">
+                    <video controls preload="metadata" playsinline src="examples/CineCraft_ChaseTrackingShot1.mp4"></video>
+                    <figcaption>Example 1</figcaption>
+                </figure>
+                <figure class="example-video">
+                    <video controls preload="metadata" playsinline src="examples/CineCraft_ChaseTrackingShot2.mp4"></video>
+                    <figcaption>Example 2</figcaption>
+                </figure>
+                <figure class="example-video">
+                    <video controls preload="metadata" playsinline src="examples/CineCraft_ChaseTrackingShot3.mp4"></video>
+                    <figcaption>Example 3</figcaption>
+                </figure>
+            </div>
+        </div>
+
+        <div class="examples-block">
+            <h3>Other examples</h3>
+            <p class="examples-mini-note">More coming soon…</p>
+            <div class="examples-grid">
+                <figure class="example-video">
+                    <video controls preload="metadata" playsinline src="examples/CineCraft_DollyZoom1.mp4"></video>
+                    <figcaption>Dolly zoom (1)</figcaption>
+                </figure>
+                <figure class="example-video">
+                    <video controls preload="metadata" playsinline src="examples/CineCraft_dollyZoom2.mp4"></video>
+                    <figcaption>Dolly zoom (2)</figcaption>
+                </figure>
+                <figure class="example-video">
+                    <video controls preload="metadata" playsinline src="examples/CineCraft_MoreHitchcockEffects.mp4"></video>
+                    <figcaption>More Hitchcock-style effects</figcaption>
+                </figure>
+                <figure class="example-video">
+                    <video controls preload="metadata" playsinline src="examples/CineCraft_TruckThenFocus_OverTheShoulder.mp4"></video>
+                    <figcaption>Truck, then rack focus, over-the-shoulder</figcaption>
+                </figure>
+            </div>
+        </div>
     </div>
 
     <div id="acknowledgements">
