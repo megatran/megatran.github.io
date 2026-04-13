@@ -216,6 +216,26 @@
             margin: -4px 0 14px 0;
             line-height: 1.45;
         }
+        /* Western standoff: half width (#id + !important so nothing overrides; avoid min() for older engines) */
+        #western-embed {
+            display: block;
+            width: 50% !important;
+            max-width: 450px !important;
+            margin: 12px 0 0 !important;
+            box-sizing: border-box !important;
+        }
+        #western-embed .video-container {
+            width: 100% !important;
+            max-width: none !important;
+            margin-left: 0 !important;
+            margin-right: 0 !important;
+        }
+        @media (max-width: 640px) {
+            #western-embed {
+                width: 100% !important;
+                max-width: none !important;
+            }
+        }
         /* Mobile-specific adjustments */
         @media (max-width: 600px) {
             body {
@@ -1324,9 +1344,10 @@
 
         <div class="examples-block">
             <h3>Western standoff</h3>
-            <p class="examples-mini-note">Longer clip on YouTube (unlisted).</p>
-            <div class="video-container">
-                <iframe src="https://www.youtube.com/embed/3WoSBRV_f04" title="Western standoff comparison" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+            <div id="western-embed" class="examples-western-embed">
+                <div class="video-container">
+                    <iframe src="https://www.youtube.com/embed/3WoSBRV_f04" title="Western standoff comparison" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                </div>
             </div>
         </div>
 
