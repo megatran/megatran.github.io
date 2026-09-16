@@ -189,6 +189,15 @@ h2 {
   color: #150c21;
 }
 
+.button-group {
+  clear: both;          /* sit below the floated intro columns (the :after clearfix no longer applies inside flex) */
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: 1em;
+  row-gap: 0;
+  margin: 0.5em 0 1em;
+}
+
 .button {
   display: inline-block;
   cursor: pointer;
@@ -196,10 +205,8 @@ h2 {
   background: none;
   color: #a0a8b0;
   font-size: 1.6em;
-  line-height: 2.4em;
-  margin-top: 0.5em;
-  margin-right: 1em;
-  float: left;
+  line-height: 1.6em;
+  margin: 0;
   padding: 0;
 }
 
@@ -247,6 +254,21 @@ h2 {
   display: inline-block;
   width: 80px;
   color: #a0a8b0;
+}
+
+/* News rows: fixed-width date column, text wraps in its own column */
+.list-item.talk {
+  display: flex;
+  align-items: baseline;
+  line-height: 1.35em;
+}
+.list-item.talk p.date {
+  flex: 0 0 80px;
+  margin: 0 10px 0 0;
+}
+.list-item.talk > span {
+  flex: 1 1 auto;
+  min-width: 0;
 }
 
 /* .date {
@@ -449,7 +471,8 @@ h3 a:hover {
   overflow: hidden;
 }
 
-.grid-item img {
+.grid-item img,
+.grid-item video {
   width: auto;
   max-width: 100%; /* Maximum width is the full container width */
   max-height: 350px; /* Maximum height set to a fixed value */
@@ -670,6 +693,17 @@ body.loading {
   .list-item {
     display: flex;
     flex-direction: column;
+  }
+
+  /* News rows keep the date beside the text on phones too.
+     (In a column layout the date's 80px flex-basis became 80px of height.) */
+  .list-item.talk {
+    flex-direction: row;
+    align-items: baseline;
+  }
+  .list-item.talk p.date {
+    flex: 0 0 72px;
+    margin-right: 8px;
   }
 
   .thumbnail {
