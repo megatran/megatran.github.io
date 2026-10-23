@@ -389,6 +389,19 @@ h3 a:hover {
   color: #a0a8b0;
 }
 
+.publication .award {
+  color: #b45309;
+  font-weight: 600;
+}
+
+.award-icon {
+  width: 1.1em;
+  height: 1.1em;
+  margin-right: 4px;
+  vertical-align: -0.18em;
+  color: #e08a00;
+}
+
 .project-description {
   width: 80%;
   float: left;
